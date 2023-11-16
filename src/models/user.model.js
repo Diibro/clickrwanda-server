@@ -2,7 +2,8 @@ const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
 const salt ="$2a$12$abcdefghijklmnopqrstuu";
-const imageUrl = "http://localhost:3000/public/images/sample.png";
+//const imageUrl = "http://localhost:3000/public/images/sample.png";
+const {singleImageUrl} = require('../utils/uploadURLs');
 
 const userModel = {
      name: "users",
@@ -31,11 +32,11 @@ const userModel = {
           }
      },
      addUser: async (req, res) => {
+               const imageUrl = singleImageUrl(req);
                try {
                     const info = req.body;
                     const user_id = uuidv4();
                     const locationSample= JSON.stringify({long: 45, lat:23});
-                    console.log("start of the logic");
                     if(Object.keys(info).length > 0){
                          bcrypt.hash(info.password.toString(), salt, (err, hash) => {
                               if (err){
@@ -48,7 +49,7 @@ const userModel = {
                                         console.log(err);
                                         res.json({status: "failed", message: "failed to create the user account"});
                                    }
-                                   return res.json({status: "pass", message: "Success"});
+                                   return res.json({status: "pass", message: "Success", imageUrl});
                               });
                          });
                     }else{
@@ -122,6 +123,9 @@ const userModel = {
                     return res.json({status: "fail", message: "user does not exist"});
                }
           });
+     },
+     login: async(req, res) => {
+          return res.json({status: "pass", message: "logged in"});
      }
 
 }

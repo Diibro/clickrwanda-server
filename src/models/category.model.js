@@ -1,6 +1,7 @@
 const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
-const imageUrl = "http://localhost:3000/public/images/sample.png";
+//const imageUrl = "http://localhost:3000/public/images/sample.png";
+const {singleImageUrl} = require('../utils/uploadURLs');
 
 const categoryModel = {
      name: "category",
@@ -31,15 +32,16 @@ const categoryModel = {
      },
      addCategory: async (req, res) => {
                try {
+                    const imageUrl = singleImageUrl(req);
                     const info = req.body;
                     const category_id = uuidv4();
                     const values = [category_id,info.category_name, imageUrl];
                     db.query(categoryModel.queries.createCategory, values , (err) => {
                          if (err){
                               console.log(err);
-                              res.json({status: "failed", message: "failed to add category. Category alread exists"});
+                              return res.json({status: "failed", message: "failed to add category. Category alread exists"});
                          }
-                         return res.json({status: "pass", message: "Success added category"});
+                         return res.json({status: "pass", message: "Success added category", icon: imageUrl});
                     });
                     
                     

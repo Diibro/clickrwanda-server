@@ -8,9 +8,9 @@ const payMethodRouter = require('./payment_method');
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
-mainRouter.use('/sub-category', subCatRouter);
 mainRouter.use('/advert', advertRouter);
 mainRouter.use('payment-methods', payMethodRouter);
+mainRouter.use('/sub-category', subCatRouter);
 
 
 module.exports = mainRouter;

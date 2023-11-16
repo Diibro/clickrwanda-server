@@ -16,14 +16,14 @@ const advertModel = {
                let ad_description = JSON.stringify(req.body.description);
                const info = req.body;
                const ad_image = "";
-               let other_images = [];
+               let other_images = JSON.stringify([]);
                let ad_images = JSON.stringify(other_images);
                const values = [ad_id, info.ad_name, ad_description, ad_image, ad_images,info.ad_type, info.ad_plan_id, info.ad_user_id, info.ad_price, info.sub_category_id ];
                db.query(advertModel.queries.add, values, (err) => {
                     if(err) {
                          return res.json({status: 'fail', message: "failed to add the product"});
                     }
-                    return res.json({status: "pass", message: "successfully added the product"});
+                    return res.json({status: "pass", message: "successfully added the product", data: req.files});
                } )
                
           } catch (error) {
