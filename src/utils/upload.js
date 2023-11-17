@@ -7,7 +7,7 @@ const logoStorage = multer.diskStorage({
      },
      filename: async(req, file, cb) => {
           const finalname = `${uuid()}-${file.originalname}`;
-          cb(null, finalname);
+          cb(null, finalname.replace(/\s+/g, '-'));
      }
 });
 
@@ -17,7 +17,7 @@ const advertStorage = multer.diskStorage({
      },
      filename: async(req, file, cb) => {
           const finalname = `${uuid()}-${file.originalname}`;
-          cb(null, finalname);
+          cb(null, finalname.replace(/\s+/g, '-'));
      }
 });
 
@@ -27,7 +27,7 @@ const payPlanStorage = multer.diskStorage({
      },
      filename: async(req, file, cb) => {
           const finalname = `${uuid()}-${file.originalname}`;
-          cb(null, finalname);
+          cb(null, finalname.replace(/\s+/g, '-'));
      }
 });
 
@@ -37,7 +37,7 @@ const categoryStorage = multer.diskStorage({
      },
      filename: async(req, file, cb) => {
           const finalname = `${uuid()}-${file.originalname}`;
-          cb(null, finalname);
+          cb(null, finalname.replace(/\s+/g, '-'));
      }
 });
 

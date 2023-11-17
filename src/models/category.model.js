@@ -1,6 +1,5 @@
 const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
-//const imageUrl = "http://localhost:3000/public/images/sample.png";
 const {singleImageUrl} = require('../utils/uploadURLs');
 
 const categoryModel = {
