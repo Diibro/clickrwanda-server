@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "clickrwanda express server",
   "main": "index.js",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "NODE_ENV=production pm2 start index.js --name clickrwanda-server",
     "dev": "nodemon index.js"
   },
   "keywords": [
@@ -23,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.3",
+    "pm2": "^5.3.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
