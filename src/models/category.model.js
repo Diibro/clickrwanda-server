@@ -70,6 +70,7 @@ const categoryModel = {
      updateCategory: async (req,res)=>{
           try {
                const info = req.body;
+               console.log(info.category_id);
                db.query(categoryModel.queries.searchQuery, [info.category_id], (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err})
