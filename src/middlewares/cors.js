@@ -13,7 +13,8 @@ const corsMiddleWare = () => {
 
      const acceptedUrlsProd = [
           'https://clickrwanda.com',
-          'https://www.clickrwanda.com'
+          'https://www.clickrwanda.com',
+          'http://localhost:5173/'
      ];
 
      const acceptedMethods = ["POST", "GET", "DELETE"];
