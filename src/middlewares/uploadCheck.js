@@ -1,6 +1,5 @@
 const multer = require('multer');
 
-
 const checkUpload = (error, req, res, next) => {
      if(error instanceof multer.MulterError){
           if(error.code === "LIMIT_FILE_SIZE"){
@@ -14,7 +13,11 @@ const checkUpload = (error, req, res, next) => {
           if(error.code === "LIMIT_UNEXPECTED_FILE"){
                return res.json({status: "fail", message: "file choosen is not accepted"});
           }
+     }else {
+          console.error(error);
+          return res.status(500).json({ status: "error", message: "Internal server error" });
      }
+     return res.status(400).end();
 }
 
 module.exports = {checkUpload};

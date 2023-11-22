@@ -16,7 +16,7 @@ const categoryModel = {
           try {
                db.query(categoryModel.queries.selectAll, (error, data) => {
                     if(error){
-                         return res.json({status: "Error", message: "server error"});
+                         return res.json({status: "Error", message: "server error", error});
                     }
                     if(data[0]){
                          return res.json({status: "pass", message: "success", data});

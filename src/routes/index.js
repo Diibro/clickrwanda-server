@@ -1,4 +1,5 @@
 const mainRouter = require('express').Router();
+const {checkUpload} = require('../middlewares/uploadCheck');
 
 const categoryRouter = require('./category');
 const subCatRouter = require('./sub_category');
@@ -17,5 +18,5 @@ mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });
 
-
+mainRouter.use(checkUpload);
 module.exports = mainRouter;

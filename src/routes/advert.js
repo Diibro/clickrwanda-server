@@ -9,5 +9,6 @@ advertRouter.post('/3', advertMultiUpload,(req, res) => advertModel.update(req, 
 advertRouter.post('/4', (req, res) => advertModel.search(req, res));
 advertRouter.delete('/5', (req, res) => advertModel.delete(req, res));
 
+
 module.exports = advertRouter;
 
