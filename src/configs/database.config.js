@@ -1,10 +1,27 @@
-const mysql = require('mysql2')
+const mysql2 = require('mysql2');
 
-const dbConnection =  mysql.createConnection({
-     host: process.env.HOST,
-     database: process.env.DB,
-     user: process.env.DB_USERNAME,
-     password: process.env.DB_PASSWORD
-});
+const connectionOptions = () => {
+     let options = {};
+     if(process.env.NODE_ENV === "production"){
+          options = {
+               host: process.env.HOST,
+               port: process.env.DB_PORT,
+               database: process.env.DB,
+               user: process.env.DB_USERNAME,
+               password: process.env.DB_PASSWORD, 
+          }
+
+     }else if(process.env.NODE_ENV === "development"){
+          options = {
+               host: process.env.HOST,
+               database: process.env.DB,
+               user: process.env.DB_USERNAME,
+               password: process.env.DB_PASSWORD
+          }
+     }
+     return options;
+}
+
+const dbConnection =  mysql2.createConnection(connectionOptions());
 
 module.exports = dbConnection;
