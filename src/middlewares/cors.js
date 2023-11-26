@@ -19,7 +19,7 @@ const corsMiddleWare = () => {
 
      const acceptedMethods = ["POST", "GET", "DELETE"];
 
-     const acceptedUrls = mode === "production" ? acceptedUrlsProd : acceptedUrlsDev;
+     var acceptedUrls = mode === "production" ? acceptedUrlsProd : acceptedUrlsDev;
      return cors({
           origin: acceptedUrls,
           methods: acceptedMethods,

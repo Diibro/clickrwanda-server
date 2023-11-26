@@ -1,6 +1,7 @@
 const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
-const {singleImageUrl} = require('../utils/uploadURLs');
+const { uploadImage } = require('../utils/cloudinary-functions');
+const { folders } = require('../configs/cloudinary.config');
 
 const categoryModel = {
      name: "category",
@@ -31,7 +32,13 @@ const categoryModel = {
      },
      addCategory: async (req, res) => {
                try {
-                    const imageUrl = singleImageUrl(req);
+                    let imageUploaded, imageUrl;
+                    if(req.file){
+                         imageUploaded = await uploadImage(req.file.path, folders.logos);
+                         if(imageUploaded.status){
+                              imageUrl = imageUploaded.image;
+                         }
+                    }
                     const info = req.body;
                     const category_id = uuidv4();
                     const values = [category_id,info.category_name, imageUrl];
@@ -71,12 +78,19 @@ const categoryModel = {
           try {
                const info = req.body;
                console.log(info.category_id);
-               db.query(categoryModel.queries.searchQuery, [info.category_id], (err, data) => {
+               db.query(categoryModel.queries.searchQuery, [info.category_id], async (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err})
                     }
                     if(data[0]){
-                         const values = [info.category_name || data[0].category_name, info.category_icon || data[0].category_icon,info.category_id];
+                         let imageUrl = data[0].category_icon;
+                         if(req.file){
+                              let imageUploaded = await uploadImage(req.file.path, folders.logos);
+                              if(imageUploaded.status){
+                                   imageUrl = imageUploaded.image;
+                              }
+                         }
+                         const values = [info.category_name || data[0].category_name, imageUrl,info.category_id];
                          db.query(categoryModel.queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});

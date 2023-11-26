@@ -2,8 +2,10 @@ const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
 const salt ="$2a$12$abcdefghijklmnopqrstuu";
-//const imageUrl = "http://localhost:3000/public/images/sample.png";
-const {singleImageUrl} = require('../utils/uploadURLs');
+const { uploadImage, deleteImage } = require('../utils/cloudinary-functions');
+const { folders } = require('../configs/cloudinary.config');
+
+const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
 const userModel = {
      name: "users",
@@ -32,11 +34,19 @@ const userModel = {
           }
      },
      addUser: async (req, res) => {
-               const imageUrl = singleImageUrl(req);
+               
                try {
                     const info = req.body;
                     const user_id = uuidv4();
                     const locationSample= JSON.stringify({long: 45, lat:23});
+                    let imageUploaded, imageUrl = unknownImage;
+                    if(req.file){
+                         imageUploaded = await uploadImage(req.file.path, folders.logos);
+                         if(imageUploaded.status){
+                              imageUrl = imageUploaded.image;
+                         }
+                    }
+                    
                     if(Object.keys(info).length > 0){
                          bcrypt.hash(info.password.toString(), salt, (err, hash) => {
                               if (err){
@@ -84,11 +94,18 @@ const userModel = {
           try {
                const info = req.body;
                const locationSample= JSON.stringify({long: 55, lat:27});
-               db.query(userModel.queries.searchQuery, [info.userId], (err, data) => {
+               db.query(userModel.queries.searchQuery, [info.userId], async (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err})
                     }
                     if(data[0]){
+                         let imageUploaded, imageUrl = data[0].profile_image;
+                         if(req.file){
+                              imageUploaded = await uploadImage(req.file.path, folders.logos);
+                              if(imageUploaded.status){
+                                   imageUrl = imageUploaded.image;
+                              }
+                         }
                          const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].email, info.phone || data[0].phone, info.password || data[0].password, imageUrl,locationSample,info.userId];
                          db.query(userModel.queries.updateQuery, values , (err) => {
                               if (err){
@@ -107,18 +124,20 @@ const userModel = {
      },
      deleteUser: async(req, res) =>{
           const info = req.body;
-          db.query(userModel.queries.searchQuery, [info.userId], (err, data) => {
+          db.query(userModel.queries.searchQuery, [info.userId], async (err, data) => {
                if(err){
                     return res.json({status: "fail", message: "server error",err})
                }
                if(data[0]){
-
-               db.query(userModel.queries.deleteQuery, [info.userId], (err) => {
-                    if(err){
-                         return res.json({status: "fail", err});
+                    if(data[0].profile_image != unknownImage){
+                         await deleteImage(data[0].profile);
                     }
-                    return res.json({status: "pass", message: "deleted user successfully"});
-               });
+                    db.query(userModel.queries.deleteQuery, [info.userId], (err) => {
+                         if(err){
+                              return res.json({status: "fail", err});
+                         }
+                         return res.json({status: "pass", message: "deleted user successfully"});
+                    });
                }else{
                     return res.json({status: "fail", message: "user does not exist"});
                }

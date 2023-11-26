@@ -3,6 +3,8 @@ const {v4: uuidv4} = require('uuid');
 const {multiImageUrlv1} = require('../utils/uploadURLs');
 const dbErrorHandler = require('../middlewares/dbError');
 const {urlDelete, multiUrlDelete} = require('../utils/remove');
+const { uploadImage, uploadImages, deleteImage, deleteImages } = require('../utils/cloudinary-functions');
+const { folders } = require('../configs/cloudinary.config');
 
 const advertModel = {
      name: "advert",
@@ -19,34 +21,51 @@ const advertModel = {
                const  ad_id = uuidv4();
                let ad_description = JSON.stringify(req.body.description);
                const info = req.body;
-               const imageInfo = multiImageUrlv1(req);
-               const ad_image = imageInfo.mainImage;
-               let other_images = JSON.stringify(imageInfo.otherImages);
-               let ad_images = JSON.stringify(other_images);
-               const values = [ad_id, info.ad_name, ad_description, ad_image, ad_images,info.ad_type, info.ad_plan_id, info.ad_user_id, info.ad_price, info.sub_category_id ];
-               db.query(advertModel.queries.add, values, (err) => {
-                    if(err) {
-                         return dbErrorHandler(err, res, advertModel.name)
-                    }
-                    return res.json({status: "pass", message: "successfully added the product"});
-               } )
+               console.log(req.files);
+               const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
+               if(ad_upload.status){
+                    const ad_image = ad_upload.image;
+                    let other_images = await uploadImages(req.files.otherImage, folders.adverts);
+                    let ad_images = JSON.stringify(other_images);
+                    const values = [ad_id, info.ad_name, ad_description, ad_image, ad_images,info.ad_type, info.ad_plan_id, info.ad_user_id, info.ad_price, info.sub_category_id ];
+                    db.query(advertModel.queries.add, values, (err) => {
+                         if(err) {
+                              return dbErrorHandler(err, res, advertModel.name);
+                         }
+                         return res.json({status: "pass", message: "successfully added the product"});
+                    } );
+               }else{
+                    return res.json({status: 'fail', message: "error uploading the main image"});
+               }
+               
                
           } catch (error) {
-               return res.json({status: "fail", message:"server error", error});
+               console.log(error);
+               return res.json({status: "fail", message:"server error"});
           }
      },
      update: async(req, res) => {
           try {
                const info  = req.body;
-               db.query(advertModel.queries.search, [info.ad_id], (err, data) =>{
+               db.query(advertModel.queries.search, [info.ad_id], async (err, data) =>{
                     if(err){
                          return res.json({status: "fail", message: "unable to update the advert", err});
                     }
                     if(data[0]){
                          const ad = data[0]; 
-                         const imageInfo = multiImageUrlv1(req);
-                         let ad_image = imageInfo.mainImage || ad.ad_image;
-                         let other_images = JSON.stringify(imageInfo.otherImages || ad.ad_images);
+                         const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
+                         let ad_image, other_images;
+                         if(ad_upload.status){
+                               ad_image = ad_upload.image;
+                         }else{
+                               ad_image = ad.ad_image;
+                         }
+                         const otherImages = await uploadImages(req.files.otherImage, folders.adverts);
+                         if(otherImages && otherImages[0] != ''){
+                              other_images = JSON.stringify(otherImages);
+                         }else{
+                              other_images =  JSON.stringify(ad.ad_images);
+                         }
                          const new_desc = JSON.stringify(info.ad_description || ad.description);
                          const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.ad_plan_id || ad.ad_plan_id, info.ad_price || ad.ad_price, info.ad_id ];
 
@@ -79,7 +98,7 @@ const advertModel = {
      delete: async(req, res) => {
           const info = req.body;
           try {
-               db.query(advertModel.queries.search, [info.ad_id], (err, data) => {
+               db.query(advertModel.queries.search, [info.ad_id], async (err, data) => {
                     if(err){
                          return dbErrorHandler(err, res, advertModel.name);
                     }
@@ -87,7 +106,9 @@ const advertModel = {
                          const ad = data[0];
                          const mainImage = ad.ad_image;
                          const other_images = JSON.parse(ad.ad_images);
-                         if(urlDelete(mainImage) && multiUrlDelete(other_images)){
+                         let imageDeleted = await  deleteImage(mainImage);
+                         let imagesDeleted = await deleteImages(other_images);
+                         if(imageDeleted.status && imagesDeleted.status){
                               db.query(advertModel.queries.delete, [info.ad_id], (err) => {
                                    if(err){
                                         return res.json({status:"fail", message: "unable to delete the advert", err});
