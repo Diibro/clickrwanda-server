@@ -9,5 +9,9 @@ userRouter.post('/3', logoUpload,(req,res) => userModel.updateUser(req, res));
 userRouter.post('/4', (req,res) => userModel.searchUser(req, res));
 userRouter.delete('/5', (req,res) => userModel.deleteUser(req, res));
 
+//user authentication routes
+
+userRouter.post('/login', (req,res) => userModel.login(req, res));
+
 
 module.exports = userRouter;

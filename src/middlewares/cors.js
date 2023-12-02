@@ -14,7 +14,8 @@ const corsMiddleWare = () => {
      const acceptedUrlsProd = [
           'https://clickrwanda.com',
           'https://www.clickrwanda.com',
-          'http://localhost:5173/'
+          'http://localhost:5173/',
+          'https://clickrwanda-client.vercel.app/'
      ];
 
      const acceptedMethods = ["POST", "GET", "DELETE"];

@@ -30,7 +30,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.3",
-    "production": "^0.0.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

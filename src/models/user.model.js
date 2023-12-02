@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const salt ="$2a$12$abcdefghijklmnopqrstuu";
 const { uploadImage, deleteImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
+const { loginUser } = require('../services/userService');
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
@@ -14,7 +15,8 @@ const userModel = {
           createUser: "insert into users values (?, ?, ?, ?, ?,?,?,NOW(),?,?)",
           updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?  where user_id = ? ",
           searchQuery: "select * from users where user_id = ?",
-          deleteQuery: "delete from users where user_id = ? "
+          deleteQuery: "delete from users where user_id = ? ",
+          seachEmail: "select user_id,user_email, user_password from users where user_email = ?"
      },
      findAll: async(req, res) => {
           try {
@@ -144,7 +146,29 @@ const userModel = {
           });
      },
      login: async(req, res) => {
-          return res.json({status: "pass", message: "logged in"});
+          let userInfo = {};
+          const info = req.body;
+          db.query(userModel.queries.seachEmail, [info.email], (err, data) => {
+               if(err) {
+                    return res.json({status: 'failed', message: 'error fetchinf data'});
+               }
+
+               if(data[0]){
+                    userInfo  = data[0];
+                    console.log(userInfo);
+                    bcrypt.compare(info.password.toString(), userInfo.user_password, (bcryptErr, result) => {
+                         if(!result || bcryptErr){
+                              return res.json({status: 'failed', message: 'invalid password'});
+                         }
+     
+                         return res.json({status: 'pass', result});
+                    });
+               }else{
+                    return res.json({status: 'failed', message: "invalid email"});
+               }
+          });
+               
+          
      }
 
 }

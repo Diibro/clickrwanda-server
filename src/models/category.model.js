@@ -2,16 +2,17 @@ const db = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
 const { uploadImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
+const dbErrorHandler = require('../middlewares/dbError');
 
 const categoryModel = {
      name: "category",
      queries: {
-          selectAll: `select * from category`,
+          selectAll: `select c.category_id, c.category_name, c.category_icon, count(a.ad_id) as total_adverts from category c left join sub_category s on c.category_id = s.parent_id left join  adverts a on a.sub_category_id = s.sub_id group by c.category_id, c.category_name;`,
           createCategory: `insert into category values (?, ?, ?)`,
           updateQuery: "update category set category_name = ?, category_icon = ? where category_id = ? ;",
           searchQuery: "select * from category where category_id = ?;",
           deleteQuery: "delete from category where category_id = ? ;",
-          deleteSubs: "delete from sub_category where parent_id = ? ;"
+          deleteSubs: "delete from sub_category where parent_id = ? ;",
      },
      findAll: async(req, res) => {
           try {
