@@ -16,11 +16,19 @@ const corsMiddleWare = () => {
 
      const acceptedMethods = ["POST", "GET", "DELETE"];
 
-     return cors({
-          origin: acceptedUrls,
+     const corsOptions = {
+          origin: function (origin, callback) {
+              if (acceptedUrls.indexOf(origin) !== -1 || !origin) {
+                  callback(null, true);
+              } else {
+                  callback(new Error('Not allowed by CORS'));
+              }
+          },
           methods: acceptedMethods,
           credentials: true
-     });
+      };
+  
+      return cors(corsOptions);
 }
 
 module.exports = corsMiddleWare;
