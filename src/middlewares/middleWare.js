@@ -1,4 +1,4 @@
-const cors = require('./cors');
+const corsMiddleWare = require('./cors');
 const express = require('express');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
@@ -8,7 +8,7 @@ const middleWares = (app) => {
      app.use(compression());
      app.use(express.urlencoded({extended:true}));
      app.use(express.json());
-     app.use(cors());
+     app.use(corsMiddleWare());
      app.use('/public',express.static('./public'));
 }
 
