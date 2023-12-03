@@ -14,7 +14,8 @@ const corsMiddleWare = () => {
 
      ];
 
-     const acceptedMethods = ["POST", "GET", "DELETE"];
+     // const acceptedMethods = ["POST", "GET", "DELETE", "OPTIONS"];
+     const acceptedMethods = '*';
 
      const corsOptions = {
           origin: function (origin, callback) {
@@ -25,7 +26,10 @@ const corsMiddleWare = () => {
               }
           },
           methods: acceptedMethods,
-          credentials: true
+          allowedHeaders: [
+               'Content-Type',
+             ],
+          // credentials: true
       };
   
       return cors(corsOptions);
