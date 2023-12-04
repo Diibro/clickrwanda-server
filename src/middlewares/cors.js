@@ -10,12 +10,18 @@ const corsMiddleWare = () => {
     'https://clickrwanda-client.vercel.app/'
   ];
 
-  return cors({
-    origin: acceptedUrls,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  });
+  if(process.env.NODE_ENV === 'development'){
+    return cors({
+      origin: acceptedUrls,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
+    });
+  }
+
+  return cors();
+
+  
   
 
 
