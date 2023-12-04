@@ -15,60 +15,28 @@ const corsMiddleWare = () => {
 
   const acceptedMethods = ["POST", "GET", "DELETE", "OPTIONS"];
 
-  const corsOptions = {
-    origin: function (origin, callback) {
-      if (acceptedUrls.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: acceptedMethods,
-    allowedHeaders: ['Content-Type'],
-    credentials: true
-  };
-
-  return (req, res, next) => {
-    if (req.method === 'OPTIONS') {
-      res.sendStatus(200);
-    } else {
-      cors(corsOptions)(req, res, () => {
-        // Manual CORS setup for other requests
-        const origin = req.header('Origin');
-        if (!origin || acceptedUrls.indexOf(origin) === -1) {
-          return next(new Error('Not allowed by CORS'));
-        }
-        
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.removeHeader('x-powered-by');
-        res.setHeader('Access-Control-Allow-Methods', acceptedMethods.join(', '));
-        
-        if (req.headers['access-control-request-headers']) {
-          res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
-        }
-  
-        next();
-      });
-    }
-  }
-
-  // return (req, res, next) => {
-  //   if (req.method === 'OPTIONS') {
-  //     res.sendStatus(200);
-  //   } else {
-  //     cors(corsOptions)(req, res, () => {
-  //       // Manual CORS setup for other requests
-  //       res.setHeader('Access-Control-Allow-Origin', req.header('Origin'));
-  //       res.removeHeader('x-powered-by');
-  //       res.setHeader('Access-Control-Allow-Methods', acceptedMethods.join(', '));
-  //       // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  //       if (req.headers['access-control-request-headers']) {
-  //         res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
-  //       }
-  //       next();
-  //     });
-  //   }
+  // const corsOptions = {
+  //   origin: function (origin, callback) {
+  //     if (acceptedUrls.indexOf(origin) !== -1 || !origin) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error('Not allowed by CORS'));
+  //     }
+  //   },
+  //   methods: acceptedMethods,
+  //   allowedHeaders: ['Content-Type'],
+  //   credentials: true
   // };
+
+  return cors({
+    origin: acceptedMethods,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+  
+
+
 };
 
 module.exports = corsMiddleWare;
