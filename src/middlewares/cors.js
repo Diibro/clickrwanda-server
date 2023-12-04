@@ -29,20 +29,46 @@ const corsMiddleWare = () => {
   };
 
   return (req, res, next) => {
-    // Handle preflight OPTIONS request
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
     } else {
       cors(corsOptions)(req, res, () => {
         // Manual CORS setup for other requests
-        res.setHeader('Access-Control-Allow-Origin', req.header('Origin'));
+        const origin = req.header('Origin');
+        if (!origin || acceptedUrls.indexOf(origin) === -1) {
+          return next(new Error('Not allowed by CORS'));
+        }
+        
+        res.setHeader('Access-Control-Allow-Origin', origin);
         res.removeHeader('x-powered-by');
-        res.setHeader('Access-Control-Allow-Methods', req.method);
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Methods', acceptedMethods.join(', '));
+        
+        if (req.headers['access-control-request-headers']) {
+          res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
+        }
+  
         next();
       });
     }
-  };
+  }
+
+  // return (req, res, next) => {
+  //   if (req.method === 'OPTIONS') {
+  //     res.sendStatus(200);
+  //   } else {
+  //     cors(corsOptions)(req, res, () => {
+  //       // Manual CORS setup for other requests
+  //       res.setHeader('Access-Control-Allow-Origin', req.header('Origin'));
+  //       res.removeHeader('x-powered-by');
+  //       res.setHeader('Access-Control-Allow-Methods', acceptedMethods.join(', '));
+  //       // res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  //       if (req.headers['access-control-request-headers']) {
+  //         res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
+  //       }
+  //       next();
+  //     });
+  //   }
+  // };
 };
 
 module.exports = corsMiddleWare;
