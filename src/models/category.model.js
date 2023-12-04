@@ -7,9 +7,9 @@ const dbErrorHandler = require('../middlewares/dbError');
 const categoryModel = {
      name: "category",
      queries: {
-          selectAll: `select c.category_id, c.category_name, c.category_icon, count(a.ad_id) as total_adverts from category c left join sub_category s on c.category_id = s.parent_id left join  adverts a on a.sub_category_id = s.sub_id group by c.category_id, c.category_name;`,
-          createCategory: `insert into category values (?, ?, ?)`,
-          updateQuery: "update category set category_name = ?, category_icon = ? where category_id = ? ;",
+          selectAll: `select c.category_id, c.category_name, c.category_icon, count(a.ad_id) as total_adverts from category c left join sub_category s on c.category_id = s.parent_id left join  adverts a on a.sub_category_id = s.sub_id group by c.category_id, c.category_name order by c.category_rank asc;`,
+          createCategory: `insert into category values (?, ?, ?,?)`,
+          updateQuery: "update category set category_name = ?, category_icon = ?, category_rank = ? where category_id = ? ;",
           searchQuery: "select * from category where category_id = ?;",
           deleteQuery: "delete from category where category_id = ? ;",
           deleteSubs: "delete from sub_category where parent_id = ? ;",
@@ -42,7 +42,7 @@ const categoryModel = {
                     }
                     const info = req.body;
                     const category_id = uuidv4();
-                    const values = [category_id,info.category_name, imageUrl];
+                    const values = [category_id,info.category_name, imageUrl, info.category_rank || 0];
                     db.query(categoryModel.queries.createCategory, values , (err) => {
                          if (err){
                               console.log(err);
@@ -91,7 +91,7 @@ const categoryModel = {
                                    imageUrl = imageUploaded.image;
                               }
                          }
-                         const values = [info.category_name || data[0].category_name, imageUrl,info.category_id];
+                         const values = [info.category_name || data[0].category_name, imageUrl, info.category_rank || data[0].category_rank, info.category_id];
                          db.query(categoryModel.queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});

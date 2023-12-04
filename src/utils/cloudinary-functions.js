@@ -20,7 +20,7 @@ const uploadImages = async (images, folderPath) => {
           if(otherUrl.status){
                imageUrls[i] = otherUrl.image;
           }else{
-               imageUrls[i] = ''
+               imageUrls[i] = '';
           }
           
      }
