@@ -10,8 +10,6 @@ const corsMiddleWare = () => {
     'https://clickrwanda-client.vercel.app/'
   ];
 
-  const acceptedMethods = ["POST", "GET", "DELETE", "OPTIONS"];
-
   return cors({
     origin: acceptedUrls,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
