@@ -15,21 +15,8 @@ const corsMiddleWare = () => {
 
   const acceptedMethods = ["POST", "GET", "DELETE", "OPTIONS"];
 
-  // const corsOptions = {
-  //   origin: function (origin, callback) {
-  //     if (acceptedUrls.indexOf(origin) !== -1 || !origin) {
-  //       callback(null, true);
-  //     } else {
-  //       callback(new Error('Not allowed by CORS'));
-  //     }
-  //   },
-  //   methods: acceptedMethods,
-  //   allowedHeaders: ['Content-Type'],
-  //   credentials: true
-  // };
-
   return cors({
-    origin: acceptedMethods,
+    origin: acceptedUrls,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
