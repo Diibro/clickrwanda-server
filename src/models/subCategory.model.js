@@ -15,8 +15,8 @@ const subCategoryModel = {
      },
      findAll: async(req, res) => {
           try {
-               db.query(subCategoryModel.queries.selectAll, (error, data) => {
-                    if(error){
+               db.query(subCategoryModel.queries.selectAll, (err, data) => {
+                    if(err){
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
                     if(data[0]){
