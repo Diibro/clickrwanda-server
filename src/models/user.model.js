@@ -188,7 +188,7 @@ const userModel = {
           res.cookie('token', token, {
                httpOnly: true,
                secure: process.env.NODE_ENV === 'production',
-               sameSite: 'None',
+               sameSite: 'Strict',
                expiresIn: 2 * 60 * 60, 
                path: '/'
           });
