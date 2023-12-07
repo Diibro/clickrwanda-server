@@ -145,41 +145,6 @@ const userModel = {
                }
           });
      },
-     // login: async(req, res) => {
-     //      let userInfo = {};
-     //      const info = req.body;
-     //      console.log(info);
-     //      db.query(userModel.queries.seachEmail, [info.email], (err, data) => {
-     //           if(err) {
-     //                return res.json({status: 'fail', message: 'Server error'});
-     //           }
-
-     //           if(data[0]){
-     //                userInfo  = data[0];
-     //                console.log(userInfo);
-     //                bcrypt.compare(info.password.toString(), userInfo.user_password, (bcryptErr, result) => {
-     //                     if(!result || bcryptErr){
-     //                          return res.json({status: 'fail', message: 'invalid password'});
-     //                     }
-     //                     const userId = data[0].user_id;
-     //                     const token = jwt.sign({userId}, process.env.JWT_SECRET_KEY,{expiresIn: '2h'});
-     //                     res.cookie('token', token);
-     //                     const user = {
-     //                          name: data[0].full_name, 
-     //                          username: data[0].username, 
-     //                          email:data[0].user_email, 
-     //                          phone: data[0].user_phone,
-     //                          profile_image: data[0].profile_image
-     //                     }
-     //                     return res.json({status: 'pass', message: 'successfully logged in', data: user});
-     //                });
-     //           }else{
-     //                return res.json({status: 'fail', message: "user not found"});
-     //           }
-     //      });
-               
-          
-     // }
      login: async (req, res) => {
           try {
           const info = req.body;
@@ -221,9 +186,9 @@ const userModel = {
           };
           
           res.cookie('token', token, {
-               // httpOnly: true,
-               // secure: process.env.NODE_ENV === 'production',
-               // sameSite: 'Strict',
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production',
+               sameSite: 'Strict',
                expiresIn: 2 * 60 * 60, 
           });
      
