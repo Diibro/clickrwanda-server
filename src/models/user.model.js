@@ -186,9 +186,11 @@ const userModel = {
           };
           
           res.cookie('token', token, {
-               // httpOnly: true,
-               // secure: process.env.NODE_ENV === 'production',
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production',
+               sameSite: 'None',
                expiresIn: 2 * 60 * 60, 
+               path: '/'
           });
      
           return res.json({ status: 'pass', message: 'Successfully logged in', data: user });
