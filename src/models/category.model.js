@@ -35,7 +35,7 @@ const categoryModel = {
                try {
                     let imageUploaded, imageUrl;
                     if(req.file){
-                         imageUploaded = await uploadImage(req.file.path, folders.logos);
+                         imageUploaded = await uploadImage(req.file.path, folders.categories);
                          if(imageUploaded.status){
                               imageUrl = imageUploaded.image;
                          }
@@ -86,7 +86,7 @@ const categoryModel = {
                     if(data[0]){
                          let imageUrl = data[0].category_icon;
                          if(req.file){
-                              let imageUploaded = await uploadImage(req.file.path, folders.logos);
+                              let imageUploaded = await uploadImage(req.file.path, folders.categories);
                               if(imageUploaded.status){
                                    imageUrl = imageUploaded.image;
                               }
