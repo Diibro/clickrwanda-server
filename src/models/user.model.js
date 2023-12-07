@@ -190,7 +190,7 @@ const userModel = {
                secure: process.env.NODE_ENV === 'production',
                sameSite: 'Strict',
                expiresIn: 2 * 60 * 60, 
-               path: '/'
+               domain: 'clickrwanda.com'
           });
      
           return res.json({ status: 'pass', message: 'Successfully logged in', data: user });
