@@ -187,10 +187,9 @@ const userModel = {
           
           res.cookie('token', token, {
                httpOnly: true,
-               secure: process.env.NODE_ENV === 'production',
+               secure: process.env.NODE_ENV === 'production' ? true : false,
                sameSite: 'None',
                expiresIn: 2 * 60 * 60, 
-               domain: '.clickrwanda.com'
           });
      
           return res.json({ status: 'pass', message: 'Successfully logged in', data: user });
