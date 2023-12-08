@@ -185,14 +185,14 @@ const userModel = {
                profile_image: userInfo.profile_image
           };
           
-          res.cookie('clickrwanda-server-token', token, {
-               httpOnly: true,
-               secure: process.env.NODE_ENV === 'production' ? true : false,
-               sameSite: 'None',
-               expiresIn: 2 * 60 * 60, 
-          });
+          // res.cookie('clickrwanda-server-token', token, {
+          //      httpOnly: true,
+          //      secure: process.env.NODE_ENV === 'production' ? true : false,
+          //      sameSite: 'None',
+          //      expiresIn: 2 * 60 * 60, 
+          // });
      
-          return res.json({ status: 'pass', message: 'Successfully logged in', data: user });
+          return res.json({ status: 'pass', message: 'Successfully logged in', data: user, loginToken: token });
           } else {
           return res.json({ status: 'fail', message: 'User not found' });
           }
@@ -203,7 +203,7 @@ const userModel = {
      },
      logout: async(req, res) => {
           try {
-               res.clearCookie('clickrwanda-server-token');
+               // req.clearCookie('clickrwanda-server-token');
                return res.json({ status: 'success', message: 'Logout successful' });
              } catch (error) {
                console.error('Error:', error);
