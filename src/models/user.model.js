@@ -185,7 +185,7 @@ const userModel = {
                profile_image: userInfo.profile_image
           };
           
-          res.cookie('token', token, {
+          res.cookie('clickrwanda-server-token', token, {
                httpOnly: true,
                secure: process.env.NODE_ENV === 'production' ? true : false,
                sameSite: 'None',
@@ -203,7 +203,7 @@ const userModel = {
      },
      logout: async(req, res) => {
           try {
-               res.clearCookie('token');
+               res.clearCookie('clickrwanda-server-token');
                return res.json({ status: 'success', message: 'Logout successful' });
              } catch (error) {
                console.error('Error:', error);
