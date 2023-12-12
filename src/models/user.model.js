@@ -194,7 +194,8 @@ const userModel = {
                username: userInfo.username,
                email: userInfo.user_email,
                phone: userInfo.user_phone,
-               profile_image: userInfo.profile_image
+               profile_image: userInfo.profile_image,
+               location: userInfo.user_location
           };
           
           // res.cookie('clickrwanda-server-token', token, {
