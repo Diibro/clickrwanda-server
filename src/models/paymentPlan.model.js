@@ -15,7 +15,7 @@ const payPlanModel = {
           try {
                const info = req.body;
                let description = JSON.stringify(info.description) || null;
-               console.log(info.plan_amount);
+               
                const price = Number(info.plan_amount);
                const values = [info.plan_id, info.plan_name,price, description]
                db.query(payPlanModel.queries.addPaymentPlan, values, (err) => {

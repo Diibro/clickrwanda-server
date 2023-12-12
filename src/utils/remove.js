@@ -7,7 +7,6 @@ const urlDelete = (fileUrl) => {
      try {
           fs.unlinkSync(parsedUrl.pathname.slice(1));
      } catch (error) {
-          console.log(error);
           return false;
      }
      return true;

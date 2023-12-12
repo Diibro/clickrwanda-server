@@ -23,7 +23,6 @@ const advertModel = {
                const  ad_id = uuidv4();
                let ad_description = JSON.stringify(req.body.description);
                const info = req.body;
-               console.log(req.files);
                const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
                if(ad_upload.status){
                     const ad_image = ad_upload.image;
@@ -42,7 +41,6 @@ const advertModel = {
                
                
           } catch (error) {
-               console.log(error);
                return res.json({status: "fail", message:"server error"});
           }
      },

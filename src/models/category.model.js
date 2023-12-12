@@ -45,7 +45,6 @@ const categoryModel = {
                     const values = [category_id,info.category_name, imageUrl, info.category_rank || 0];
                     db.query(categoryModel.queries.createCategory, values , (err) => {
                          if (err){
-                              console.log(err);
                               return res.json({status: "failed", message: "failed to add category. Category alread exists"});
                          }
                          return res.json({status: "pass", message: "Success added category", icon: imageUrl});
@@ -53,7 +52,6 @@ const categoryModel = {
                     
                     
                } catch (error) {
-                    console.error(error);
                     res.json({status: "failed", message: "error adding category", error});
                }
           
@@ -78,7 +76,6 @@ const categoryModel = {
      updateCategory: async (req,res)=>{
           try {
                const info = req.body;
-               console.log(info.category_id);
                db.query(categoryModel.queries.searchQuery, [info.category_id], async (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err})

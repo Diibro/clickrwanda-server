@@ -26,8 +26,7 @@ const subCategoryModel = {
                     }
 
                } )
-          } catch (error) {
-               console.log(error);
+          } catch (error) { 
                return error;
           }
      },
@@ -44,8 +43,7 @@ const subCategoryModel = {
                     });
                     
                     
-               } catch (error) {
-                    console.log(error);
+               } catch (error) { 
                     return res.json({status: "failed", message: "error adding category", error});
                }
           
@@ -109,13 +107,11 @@ const subCategoryModel = {
           }
      },
      delete: async(req, res) =>{
-          const info = req.body;
-          console.log(info);
+          const info = req.body; 
           db.query(subCategoryModel.queries.searchQuery, [info.sub_id], (err, data) => {
                if(err){
                     return  dbErrorHandler(err, res, subCategoryModel.name);
-               }
-               console.log(data);
+               } 
                if(data[0]){
                     db.query(subCategoryModel.queries.deleteQuery, [info.sub_id], (err) => {
                          if(err){

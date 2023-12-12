@@ -70,7 +70,6 @@ const userModel = {
                     
                     
                } catch (error) {
-                    console.error(error);
                     res.json({status: "failed"});
                }
           
@@ -96,9 +95,21 @@ const userModel = {
           try {
                const info = req.body;
                const locationSample= JSON.stringify({long: 55, lat:27});
+               let newPassword = null;
+               if(info.password){
+                    newPassword = new Promise((resolve, reject) => {
+                         bcrypt.hash(info.password.toString(), salt, (err,result) => {
+                              if(err){
+                                   reject(false);
+                                   return res.json({status: "fail", message: "server error",err});
+                              }
+                              resolve(result);
+                         });
+                    });
+               }
                db.query(userModel.queries.searchQuery, [req.userId], async (err, data) => {
                     if(err){
-                         return res.json({status: "fail", message: "server error",err})
+                         return res.json({status: "fail", message: "server error",err});
                     }
                     if(data[0]){
                          let imageUploaded, imageUrl = data[0].profile_image;
@@ -108,7 +119,7 @@ const userModel = {
                                    imageUrl = imageUploaded.image;
                               }
                          }
-                         const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].email, info.phone || data[0].phone, info.password || data[0].password, imageUrl,locationSample,req.userId];
+                         const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].email, info.phone || data[0].phone, newPassword || data[0].password, imageUrl,locationSample,req.userId];
                          db.query(userModel.queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the user. user does not exist", err});
@@ -149,13 +160,13 @@ const userModel = {
           try {
           const info = req.body;
           const data = await new Promise((resolve, reject) => {
-          db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
-               if (err) {
-               reject(err);
-               } else {
-               resolve(result);
-               }
-          });
+               db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+                    if (err) {
+                    reject(err);
+                    } else {
+                    resolve(result);
+                    }
+               });
           });
      
           if (data[0]) {
@@ -178,6 +189,7 @@ const userModel = {
           
      
           const user = {
+               id: userInfo.user_id,
                name: userInfo.full_name,
                username: userInfo.username,
                email: userInfo.user_email,
@@ -197,7 +209,6 @@ const userModel = {
           return res.json({ status: 'fail', message: 'User not found' });
           }
           } catch (error) {
-          console.error('Error:', error);
           return res.json({ status: 'fail', message: 'Server error' });
           }
      },
@@ -206,7 +217,6 @@ const userModel = {
                // req.clearCookie('clickrwanda-server-token');
                return res.json({ status: 'success', message: 'Logout successful' });
              } catch (error) {
-               console.error('Error:', error);
                return res.json({ status: 'fail', message: 'Server error during logout' });
              }
      }

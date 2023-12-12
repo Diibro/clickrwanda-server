@@ -13,7 +13,6 @@ const checkUpload = (error, req, res, next) => {
           if(error.code === "LIMIT_UNEXPECTED_FILE"){
                return res.json({status: "fail", message: "file choosen is not accepted"});
           }else{
-               console.error(error);
                return res.json({status:"error", message: 'image error'});
           }
      }else {
