@@ -15,15 +15,27 @@ const uploadImage = (imagePath, folderPath) => {
 
 const uploadImages = async (images, folderPath) => {
      const imageUrls = [];
-     for(let i = 0; i < images.length; i++){
-          let otherUrl = await uploadImage(images[i].path, folderPath);
-          if(otherUrl.status){
-               imageUrls[i] = otherUrl.image;
-          }else{
-               imageUrls[i] = '';
+     for(const image of images){
+          try {
+               let otherUrl = await uploadImage(image.path, folderPath);
+               if (otherUrl.status === 'success') {
+                    imageUrls.push(otherUrl.image);
+               } else {
+               imageUrls.push('');
+               }
+          } catch (error) {
+               imageUrls.push('');
           }
-          
      }
+     // for(let i = 0; i < images.length; i++){
+     //      let otherUrl = await uploadImage(images[i].path, folderPath);
+     //      if(otherUrl.status){
+     //           imageUrls[i] = otherUrl.image;
+     //      }else{
+     //           imageUrls[i] = '';
+     //      }
+          
+     // }
 
      return(imageUrls);
 }

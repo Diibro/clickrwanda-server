@@ -82,7 +82,7 @@ const userModel = {
                          return res.json({status: "fail", message: "invalid info"});
                     }
                     if(data[0]){
-                         return res.json({status: "success", data: data[0]});
+                         return res.json({status: "pass", data: data[0]});
                     }else{
                          return res.json({status: "fail", message: "user does not exist"});
                     }
@@ -94,7 +94,6 @@ const userModel = {
      updateUser: async (req,res)=>{
           try {
                const info = req.body;
-               const locationSample= JSON.stringify({long: 55, lat:27});
                let newPassword = null;
                if(info.password){
                     newPassword = new Promise((resolve, reject) => {
@@ -119,10 +118,12 @@ const userModel = {
                                    imageUrl = imageUploaded.image;
                               }
                          }
-                         const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].email, info.phone || data[0].phone, newPassword || data[0].password, imageUrl,locationSample,req.userId];
+                         
+                         const locationSample= info.location || JSON.stringify( data[0].user_location );
+                         const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].user_email, info.phone || data[0].user_phone, imageUrl,locationSample,req.userId];
                          db.query(userModel.queries.updateQuery, values , (err) => {
                               if (err){
-                                   return res.json({status: "failed", message: "failed to update the user. user does not exist", err});
+                                   return res.json({status: "fail", message: "failed to update the user. user does not exist", err});
                               }
                               return res.json({status: "pass", message: "Successfully updated the info"});
                          });

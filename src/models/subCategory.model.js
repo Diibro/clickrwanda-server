@@ -6,7 +6,7 @@ const  dbErrorHandler = require('../middlewares/dbError');
 const subCategoryModel = {
      name: "sub category",
      queries: {
-          selectAll: "select s.sub_id, s.sub_name, c.category_name, c.category_icon from sub_category s inner join category c on s.parent_id = c.category_id; ",
+          selectAll: "select s.sub_id, s.sub_name, c.category_id, c.category_name, c.category_icon from sub_category s inner join category c on s.parent_id = c.category_id; ",
           categorySearch: "select * from sub_category where parent_id = ?;",
           addQuery: "insert into sub_category values (?, ?, ?)",
           updateQuery: "update sub_category set sub_name = ? where sub_id = ? ;",
