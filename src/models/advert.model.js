@@ -22,7 +22,8 @@ const advertModel = {
      add: async(req, res) => {
           try {
                const  ad_id = uuidv4();
-               let ad_description = JSON.stringify(req.body.description);
+               const desc = {desc: req.body.description};
+               let ad_description = JSON.stringify(desc);
                const info = req.body;
                const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
                if(ad_upload.status){
