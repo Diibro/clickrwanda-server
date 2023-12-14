@@ -14,7 +14,7 @@ const userModel = {
      name: "users",
      queries: {
           selectAll: "select * from users",
-          createUser: "insert into users values (?, ?, ?, ?, ?,?,?,NOW(),?,?)",
+          createUser: "insert into users (user_id, full_name, username, user_email, user_phone, user_password, profile_image, reg_date, user_loaction, user_type) values (?, ?, ?, ?, ?,?,?,NOW(),?,?)",
           updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?  where user_id = ? ",
           searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type from users where user_id = ?",
           deleteQuery: "delete from users where user_id = ? ",
