@@ -15,7 +15,7 @@ const advertModel = {
           getUserAdverts: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where u.user_id = ?;",
           // findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, c.sub_id, p.plan_name, u.full_name, u.user_location, u.profile_image from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id;",
           add: "insert into adverts (ad_id, ad_name, description, ad_image, ad_images, ad_type, ad_user_id, ad_price, sub_category_id) values (?,?,?,?,?,?,?,?,?)",
-          search: "select * from adverts where ad_id = ?;",
+          search: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, c.sub_id, c.sub_name, p.plan_name, u.user_id, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where ad_id = ?;",
           update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, ad_price = ? where ad_id = ?;",
           delete: "delete from adverts where ad_id = ? ;"
      },
@@ -138,7 +138,7 @@ const advertModel = {
                          return dbErrorHandler(err, res, advertModel.name);
                     }
                     if(data[0]){
-                         return res.json({status:'pass', data});
+                         return res.json({status:'pass', data:data[0]});
                     }else{
                          return res.json({status: "fail", message: 'no data found'});
                     }
@@ -165,7 +165,7 @@ const advertModel = {
           try {
                db.query(advertModel.queries.getUserAdverts, [req.userId], (err, result) => {
                     if(err) return dbErrorHandler(err, res, "user");
-                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0]? result : "no adverts found"});
+                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0] ? result : "no adverts found"});
                });  
           } catch (error) {
                return res.json({status: 'fail', message: "Server error"});
