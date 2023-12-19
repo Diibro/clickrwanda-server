@@ -18,7 +18,9 @@ const userModel = {
           updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?  where user_id = ? ",
           searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type from users where user_id = ?",
           deleteQuery: "delete from users where user_id = ? ",
-          seachEmail: "select * from users where user_email = ?"
+          seachEmail: "select * from users where user_email = ?",
+          getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
+          getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?"
      },
      findAll: async(req, res) => {
           try {
