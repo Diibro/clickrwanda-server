@@ -6,6 +6,8 @@ const {urlDelete, multiUrlDelete} = require('../utils/remove');
 const { uploadImage, uploadImages, deleteImage, deleteImages } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
 const userModel = require('./user.model');
+const categoryModel = require('./category.model');
+const subCategoryModel = require('./subCategory.model');
 
 const advertModel = {
      name: "advert",
@@ -224,11 +226,30 @@ const advertModel = {
           try {
                const info = req.body;
                const category_id = info.category_id;
+               const categoryInfo = {};
+               await Promise.all([
+                    new Promise((resolve) => {
+                         db.query(subCategoryModel.queries.categorySearch, [info.category_id], (catError, catData) => {
+                              if(catError) return dbErrorHandler(catError, res, 'sub category');
+                              categoryInfo.subCategories = catData;
+                              resolve();
+                         })
+                    }),
+                    new Promise((resolve) => {
+                         db.query(categoryModel.queries.searchQuery, [category_id], (err, data) => {
+                              if(err) return dbErrorHandler(err, res, 'categoryt');
+                              categoryInfo.categoryData = data[0];
+                              resolve();
+                         })
+                    })
+               ]);
                db.query(advertModel.queries.getCategory, [category_id], (err, result) => {
                     if(err){
                          return dbErrorHandler(err);
                     }
-                    return res.json({status: 'pass', data: result[0] ? result : 'no data found'});
+                    categoryInfo.adverts = result;
+
+                    return res.json({status: 'pass', data: result[0] ? categoryInfo : 'no data found'});
                })
           } catch (error) {
                
@@ -240,6 +261,28 @@ const advertModel = {
                     if(err) return dbErrorHandler(err, res, "user");
                     return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0] ? result : "no adverts found"});
                });  
+          } catch (error) {
+               return res.json({status: 'fail', message: "Server error"});
+          }
+     },
+     searchUserAds: async(req, res) => {
+          try {
+               const info = req.body;
+               db.query(advertModel.queries.getUserAdverts, [info.userId], (err, result) => {
+                    if(err) return dbErrorHandler(err, res, "user");
+                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0] ? result : "no adverts found"});
+               });
+          } catch (error) {
+               return res.json({status: 'fail', message: "Server error"});
+          }
+     },
+     getSubCategoryAds: async (req,res) => {
+          try {
+               const info = req.body;
+               db.query(advertModel.queries.getSubCategory, [info.sub_id], (err, result) => {
+                    if(err) return dbErrorHandler(err, res, "sub category");
+                    return res.json({status: "pass", message: "sub category adverts fetch successfully", data: result[0] ? result : "no adverts found"});
+               });
           } catch (error) {
                return res.json({status: 'fail', message: "Server error"});
           }

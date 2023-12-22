@@ -13,6 +13,8 @@ advertRouter.delete('/5',authenticateUser, (req, res) => advertModel.delete(req,
 //customized routes
 
 advertRouter.post('/search-category', (req, res) => advertModel.getCategorized(req, res));
+advertRouter.post('/search-sub-category', (req,res) => advertModel.getSubCategoryAds(req, res));
 advertRouter.get('/get-user-adverts', authenticateUser, (req, res) => advertModel.getUserAds(req, res));
+advertRouter.post('/get-user-ads', (req, res) => advertModel.searchUserAds(req, res));
 module.exports = advertRouter;
 
