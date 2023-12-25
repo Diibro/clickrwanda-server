@@ -7,6 +7,7 @@ const userRouter = require('./user');
 const advertRouter = require('./advert');
 const payMethodRouter = require('./payment_method');
 const paymentPlanRouter = require('./payment_plan');
+const ReviewRouter = require('./review');
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
@@ -14,6 +15,7 @@ mainRouter.use('/advert', advertRouter);
 mainRouter.use('payment-methods', payMethodRouter);
 mainRouter.use('/sub-category', subCatRouter);
 mainRouter.use('/payment-plan', paymentPlanRouter);
+mainRouter.use('/review', ReviewRouter);
 mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });
