@@ -15,7 +15,9 @@ const advertModel = {
           testFind: 'select * from adverts',
           findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id limit 50;",
           getCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ?;",
+          getSimilarCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ? and a.ad_id <> ?;",
           getSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ?;",
+          getSimilarSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ? and a.ad_id <> ?;",
           getUserAdverts: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where u.user_id = ?;",
           // findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, c.sub_id, p.plan_name, u.full_name, u.user_location, u.profile_image from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id;",
           add: "insert into adverts (ad_id, ad_name, description, ad_image, ad_images, ad_type, ad_user_id, ad_price, sub_category_id,ad_date, contact ) values (?,?,?,?,?,?,?,?,?, NOW(),?)",
@@ -150,7 +152,7 @@ const advertModel = {
                          let totalAds = 0;
                          await Promise.all([
                               new Promise((resolve, reject) => {
-                                   db.query(advertModel.queries.getSubCategory, [data[0].sub_id], (subError, subAds) => {
+                                   db.query(advertModel.queries.getSimilarSubCategory, [data[0].sub_id, info.ad_id], (subError, subAds) => {
                                         if(subError) {
                                              subCategoryAds = null;
                                              reject(subError);
@@ -163,7 +165,7 @@ const advertModel = {
                               }),
 
                               new Promise((resolve, reject) => {
-                                   db.query(advertModel.queries.getCategory, [data[0].category_id], (catErr, catAds) => {
+                                   db.query(advertModel.queries.getSimilarCategory, [data[0].category_id, info.ad_id], (catErr, catAds) => {
                                         if(catErr) {
                                              categoryAds = null;
                                              reject(catErr)
@@ -237,7 +239,7 @@ const advertModel = {
                     }),
                     new Promise((resolve) => {
                          db.query(categoryModel.queries.searchQuery, [category_id], (err, data) => {
-                              if(err) return dbErrorHandler(err, res, 'categoryt');
+                              if(err) return dbErrorHandler(err, res, 'category');
                               categoryInfo.categoryData = data[0];
                               resolve();
                          })
@@ -268,10 +270,25 @@ const advertModel = {
      searchUserAds: async(req, res) => {
           try {
                const info = req.body;
-               db.query(advertModel.queries.getUserAdverts, [info.userId], (err, result) => {
-                    if(err) return dbErrorHandler(err, res, "user");
-                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0] ? result : "no adverts found"});
-               });
+               const userData = {};
+               await Promise.all([
+                    new Promise((resolve) => {
+                         db.query(advertModel.queries.getUserAdverts, [info.userId], (err, result) => {
+                              if(err) return dbErrorHandler(err, res, "user");
+                              userData.ads = result[0] ? result : 'no data found';
+                              resolve();
+                         });
+                    }),
+                    new Promise((resolve, reject) => {
+                         db.query(userModel.queries.searchQuery, [info.userId], (err, result) => {
+                              if(err) reject(dbErrorHandler(err, res, "user"));
+                              userData.vendorInfo = result[0];
+                              resolve();
+                         })
+                    })
+               ])
+               return res.json({status: 'pass', message: "success", data: userData});
+               
           } catch (error) {
                return res.json({status: 'fail', message: "Server error"});
           }
