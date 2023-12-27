@@ -18,12 +18,12 @@ const advertModel = {
           getSimilarCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ? and a.ad_id <> ?;",
           getSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ?;",
           getSimilarSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ? and a.ad_id <> ?;",
-          getUserAdverts: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where u.user_id = ?;",
+          getUserAdverts: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, date_format(a.ad_date,'%Y-%m-%d') as ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where u.user_id = ?;",
           // findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, c.sub_id, p.plan_name, u.full_name, u.user_location, u.profile_image from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id;",
           add: "insert into adverts (ad_id, ad_name, description, ad_image, ad_images, ad_type, ad_user_id, ad_price, sub_category_id,ad_date, contact ) values (?,?,?,?,?,?,?,?,?, NOW(),?)",
           search: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.contact, a.ad_views, a.ad_date, a.status, c.sub_id, c.sub_name, p.plan_name, u.user_id, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, date_format(u.reg_date, '%Y-%m-%d') as reg_date, category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where ad_id = ?;",
           update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, ad_price = ? where ad_id = ?;",
-          delete: "delete from adverts where ad_id = ? ;",
+          delete: "delete from adverts where ad_id = ? and ad_user_id = ?;",
           addAdView: "update adverts set ad_views = ? where ad_id = ?;",
           addAdDiscount: "update adverts set ad_discount = ? where ad_id = ?;"
      },
@@ -115,11 +115,12 @@ const advertModel = {
                     if(data[0]){
                          const ad = data[0];
                          const mainImage = ad.ad_image;
-                         const other_images = JSON.parse(ad.ad_images);
+                         // const other_images = JSON.parse(ad.ad_images);
+                         const other_images = ad.ad_images;
                          let imageDeleted = await  deleteImage(mainImage);
                          let imagesDeleted = await deleteImages(other_images);
                          if(imageDeleted.status && imagesDeleted.status){
-                              db.query(advertModel.queries.delete, [info.ad_id], (err) => {
+                              db.query(advertModel.queries.delete, [info.ad_id, req.userId], (err) => {
                                    if(err){
                                         return res.json({status:"fail", message: "unable to delete the advert", err});
                                    }
