@@ -155,12 +155,11 @@ const advertModel = {
                                    db.query(advertModel.queries.getSimilarSubCategory, [data[0].sub_id, info.ad_id], (subError, subAds) => {
                                         if(subError) {
                                              subCategoryAds = null;
-                                             reject(subError);
                                         }
                                         if(subAds[0]) {
                                              subCategoryAds = subAds;
-                                             resolve();
                                         }
+                                        resolve();
                                    });
                               }),
 
@@ -168,12 +167,11 @@ const advertModel = {
                                    db.query(advertModel.queries.getSimilarCategory, [data[0].category_id, info.ad_id], (catErr, catAds) => {
                                         if(catErr) {
                                              categoryAds = null;
-                                             reject(catErr)
                                         }
                                         if(catAds[0]) {
                                              categoryAds = catAds;
-                                             resolve();
                                         }
+                                        resolve();
                                    })
                               }),
                               new Promise((resolve, reject) => {
