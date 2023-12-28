@@ -16,5 +16,6 @@ advertRouter.post('/search-category', (req, res) => advertModel.getCategorized(r
 advertRouter.post('/search-sub-category', (req,res) => advertModel.getSubCategoryAds(req, res));
 advertRouter.get('/get-user-adverts', authenticateUser, (req, res) => advertModel.getUserAds(req, res));
 advertRouter.post('/get-user-ads', (req, res) => advertModel.searchUserAds(req, res));
+advertRouter.post('/search-adverts', (req, res) => advertModel.searchAds(req, res));
 module.exports = advertRouter;
 

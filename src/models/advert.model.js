@@ -15,6 +15,8 @@ const advertModel = {
           testFind: 'select * from adverts',
           findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id order by a.ad_date desc limit 50 ;",
           getCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ?;",
+          // searchAdverts: "select (char_length(a.ad_name) - char_length(replace(a.ad_name, ?, ''))) / char_length(?) * 100 as inclusion_percentage, a.ad_id, a.ad_name, a.ad_image, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_name, p.plan_name, u.full_name, u.user_location,u.user_phone, u.user_email, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') order by inclusion_percentage desc;",
+          searchAdverts: "select (char_length(a.ad_name) - char_length(replace(a.ad_name, ?, ''))) / char_length(?) * 100 as inclusion_percentage, a.ad_id, a.ad_name, a.ad_image, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_name, p.plan_name, u.full_name, u.user_location,u.user_phone, u.user_email, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') order by inclusion_percentage desc;",
           getSimilarCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ? and a.ad_id <> ?;",
           getSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ?;",
           getSimilarSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ? and a.ad_id <> ?;",
@@ -301,6 +303,29 @@ const advertModel = {
                });
           } catch (error) {
                return res.json({status: 'fail', message: "Server error"});
+          }
+     },
+     searchAds: async(req, res) => {
+          try {
+               const info = req.body;
+               const {searched} = info;
+               const adsFound = {};
+               await Promise.all([
+                    new Promise((resolve) => {
+                         db.query(advertModel.queries.searchAdverts, [searched, searched, searched], (err, result) => {
+                              if(err) adsFound.ads = null;
+                              if(result[0]){
+                                   adsFound.ads = result;
+                              }else{
+                                   adsFound.ads = "no adverts found";
+                              }
+                              resolve();
+                         })
+                    })
+               ])
+               return res.json({status: "pass", message:"success", data: adsFound});
+          } catch (error) {
+               return res.json({status: "fail", message: "Server error"});
           }
      }
 };
