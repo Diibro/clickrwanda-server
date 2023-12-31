@@ -19,6 +19,7 @@ const advertModel = {
           searchAdverts: "select (char_length(a.ad_name) - char_length(replace(a.ad_name, ?, ''))) / char_length(?) * 100 as inclusion_percentage, a.ad_id, a.ad_name, a.ad_image, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_name, p.plan_name, u.full_name, u.user_location,u.user_phone, u.user_email, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') order by inclusion_percentage desc;",
           searchAdvertsSub: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id in (select sub_id from sub_category where sub_name like concat('%', ?, '%'));",
           searchAdvertsCat: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id in (select category_id from category where category_name like concat('%',?,'%'));",
+          searchAdvertsUser: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where u.user_id in (select user_id from users where full_name like concat('%',?,'%') or username like concat('%',?,'%'));",
           getSimilarCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ? and a.ad_id <> ?;",
           getSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ?;",
           getSimilarSubCategory: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id = ? and a.ad_id <> ?;",
@@ -312,15 +313,19 @@ const advertModel = {
                const info = req.body;
                const {searched} = info;
                const adsFound = {};
+
+               const uniqueAds = new Set();
                await Promise.all([
                     new Promise((resolve) => {
                          db.query(advertModel.queries.searchAdverts, [searched, searched, searched], (err, result) => {
                               if(err) adsFound.ads = null;
-                              if(result[0]){
-                                   adsFound.ads = result;
-                              }else{
+                              if (Array.isArray(result)) {
+                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
+                                   adsFound.ads = uniqueAdsResult[0] ? uniqueAdsResult : null;
+                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
+                               } else {
                                    adsFound.ads = null;
-                              }
+                               }
                               resolve();
                          })
                     }),
@@ -329,9 +334,13 @@ const advertModel = {
                               if(err) {
                                    adsFound.sub = null
                               }
-                              if(Array.isArray(result) && result[0]){
-                                   adsFound.sub = result;
-                              }
+                              if (Array.isArray(result)) {
+                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
+                                   adsFound.sub = uniqueAdsResult[0] ? uniqueAdsResult : null;
+                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
+                               } else {
+                                   adsFound.sub = null;
+                               }
                               
                               resolve();
                          })
@@ -341,13 +350,32 @@ const advertModel = {
                               if(err) {
                                    adsFound.cat = null;
                               }
-                              if(result[0]){
-                                   adsFound.cat = result;
+                              if (Array.isArray(result)) {
+                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
+                                   adsFound.cat = uniqueAdsResult[0] ? uniqueAdsResult : null;
+                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
+                               } else {
+                                   adsFound.cat = null;
+                               }
+                              resolve();
+                         })
+                    }),
+                    new Promise((resolve) => {
+                         db.query(advertModel.queries.searchAdvertsUser, [searched, searched], (err, result) => {
+                              if(err) {
+                                   adsFound.user = null;
+                              }
+                              if (Array.isArray(result)) {
+                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
+                                   adsFound.user = uniqueAdsResult[0] ? uniqueAdsResult : null;
+                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
+                              } else {
+                                   adsFound.user = null;
                               }
                               resolve();
                          })
                     }),
-               ])
+               ]);
                return res.json({status: "pass", message:"success", data: adsFound});
           } catch (error) {
                return res.json({status: "fail", message: "Server error"});
