@@ -19,6 +19,8 @@ const userModel = {
           searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type,date_format(reg_date, '%Y-%m-%d') as reg_date, rating from users where user_id = ?",
           deleteQuery: "delete from users where user_id = ? ",
           seachEmail: "select * from users where user_email = ?",
+          searchByid: "select * from users where user_id = ? ",
+          updateUserRating: "update users set rating = ? where user_id = ?",
           getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
           getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?"
      },
@@ -223,6 +225,30 @@ const userModel = {
              } catch (error) {
                return res.json({ status: 'fail', message: 'Server error during logout' });
              }
+     },
+     rateUser: async (req, res) => {
+          try {
+               const info = req.body;
+               const newRate  = info.rating;
+               console.log(newRate);
+               db.query(userModel.queries.searchByid, [info.userId], (err, data) => {
+                    if (err) return dbErrorHandler(err, res, "user");
+                    if(data[0]){
+                         let oldRate = data[0].rating;
+                         let finalRating = oldRate > 0 ?  ((newRate + ((100 - oldRate) / 4)) / 2) + oldRate : newRate;
+                         db.query(userModel.queries.updateUserRating, [finalRating, info.userId], (error) => {
+                              if(error) return dbErrorHandler(error, res, "user");
+                              return res.json({status: "pass", message: "submitted the rating successfully"});
+                         });
+                    }else{
+                         return res.json({status: "fail", message: "could updated the rating"});
+                    }
+               });
+               
+
+          } catch (error) {
+               return res.json({status: "fail", message: "server error"});
+          }
      }
 
 }

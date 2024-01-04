@@ -7,15 +7,15 @@ const ReviewModel =  {
      queries: {
           findAdReviews: "select message, name from reviews where ad_id = ?",
           findUserReviews: "select message, name from reviews where user_id = ?",
-          addAdReview: "insert into reviews (id, message, user_id, ad_id, name) values (?, ?,?, ?, ?)",
-          addUserReview: "into reviews (id, message, user_id, name) values (?, ?, ?, ?)",
+          addAdReview: "insert into reviews (id, message, user_id, ad_id, name, type) values (?, ?,?, ?, ?, ?)",
+          addUserReview: "into reviews (id, message, user_id, name, type) values (?, ?, ?, ?,?)",
           deleteReview: 'delete from reviews where id = ?'
      },
      addReviewAd: async (req, res) => {
           try {
                const info = req.body;
                const id = uuidv4();
-               const values = [id, info.message, info.user_id, info.ad_id, info.name];
+               const values = [id, info.message, info.user_id, info.ad_id, info.name, info.review_type];
 
                db.query(ReviewModel.queries.addAdReview, values, (error) => {
                     if (error) return dbErrorHandler(error, res, 'review');
@@ -30,7 +30,7 @@ const ReviewModel =  {
           try {
                const info = req.body;
                const id = uuidv4();
-               const values = [id, info.message, info.user_id, info.name];
+               const values = [id, info.message, info.user_id, info.name, info.review_type];
 
                db.query(ReviewModel.queries.addUserReview, values, (error) => {
                     if (error) return dbErrorHandler(error, res, 'review');

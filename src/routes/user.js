@@ -13,6 +13,7 @@ userRouter.delete('/5', authenticateUser, (req,res) => userModel.deleteUser(req,
 //user authentication routes
 
 userRouter.post('/login', (req,res) => userModel.login(req, res));
+userRouter.post('/rate-user', (req,res) => userModel.rateUser(req, res));
 // userRouter.post('/logout', (req, res) => userModel.logout(req, res));
 
 
