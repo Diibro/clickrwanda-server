@@ -7,6 +7,7 @@ const { uploadImage, deleteImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
 const { loginUser } = require('../services/userService');
 const dbErrorHandler = require('../middlewares/dbError');
+const {sendWelcomeMessage, sendPassWordRecovery, sendRecoveryMessage} = require('../configs/mail');
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
@@ -22,7 +23,8 @@ const userModel = {
           searchByid: "select * from users where user_id = ? ",
           updateUserRating: "update users set rating = ? where user_id = ?",
           getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
-          getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?"
+          getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?",
+          changePassword: "update users set user_password = ? where user_id = ? ;"
      },
      findAll: async(req, res) => {
           try {
@@ -45,36 +47,42 @@ const userModel = {
                
                try {
                     const info = req.body;
-                    const user_id = uuidv4();
-                    const locationSample= JSON.stringify({location: info.location});
-                    let imageUploaded, imageUrl = unknownImage;
-                    if(req.file){
-                         imageUploaded = await uploadImage(req.file.path, folders.logos);
-                         if(imageUploaded.status){
-                              imageUrl = imageUploaded.image;
+                    const mailCheck = await sendWelcomeMessage(info.email);
+                    if(mailCheck.status){
+                         const user_id = uuidv4();
+                         const locationSample= JSON.stringify({location: info.location});
+                         let imageUploaded, imageUrl = unknownImage;
+                         if(req.file){
+                              imageUploaded = await uploadImage(req.file.path, folders.logos);
+                              if(imageUploaded.status){
+                                   imageUrl = imageUploaded.image;
+                              }
                          }
+                         
+                         if(Object.keys(info).length > 0){
+                              bcrypt.hash(info.password.toString(), salt, (err, hash) => {
+                                   if (err){
+                                        return res.json({status: "fail", message:"unable to complete account creation"});
+                                   } 
+                                   const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
+                                   db.query(userModel.queries.createUser, values , (err) => {
+                                        if (err){
+                                             return dbErrorHandler(err, res, 'user');
+                                        }
+                                        return res.json({status: "pass", message: "Successfully created the account", imageUrl});
+                                   });
+                              });
+                         }else{
+                              return res.json({status: "fail"});
+                         }
+                    }else{
+                         return res.json({status: "fail", message: "invalid email"});
                     }
                     
-                    if(Object.keys(info).length > 0){
-                         bcrypt.hash(info.password.toString(), salt, (err, hash) => {
-                              if (err){
-                                   return res.json({status: "fail", message:"unable to complete account creation"});
-                              } 
-                              const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
-                              db.query(userModel.queries.createUser, values , (err) => {
-                                   if (err){
-                                        return dbErrorHandler(err, res, 'user');
-                                   }
-                                   return res.json({status: "pass", message: "Successfully created the account", imageUrl});
-                              });
-                         });
-                    }else{
-                         return res.json({status: "failure"});
-                    }
                     
                     
                } catch (error) {
-                    res.json({status: "failed"});
+                    res.json({status: "fail"});
                }
           
      },
@@ -247,6 +255,82 @@ const userModel = {
 
           } catch (error) {
                return res.json({status: "fail", message: "server error"});
+          }
+     },
+     resetPasswordRequest: async(req, res) => {
+          try {
+               const info = req.body;
+               const data = await new Promise((resolve, reject) => {
+                    db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+                         if (err) {
+                         reject(err);
+                         } else {
+                         resolve(result);
+                         }
+                    });
+               });
+               if (data[0]) {
+                    const userInfo = data[0];
+                    const token = jwt.sign({ userEmail: userInfo.user_email }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+                    const resetEmail = await sendPassWordRecovery(userInfo.user_email, token);
+                    if(resetEmail.status){
+                         return res.json({status: "pass", message: "Check your email for password reset link"});
+                    }else{
+                         return res.json({status: "fail", message: "you used an invalid email"});
+                    }
+               }else{
+                    return res.json({status: "fail", message: "email not registered"});
+               }
+     
+          } catch (error) {
+               return res.json({status: "fail", message: "server error"});
+          }
+     },
+     getPasswordResetEmail: async(req,res) => {
+          try {
+               const info = req.body;
+               const token = info.token;
+               jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+                    if(err){
+                         return res.json({ status: "fail", message: 'invalid password reset token' });
+                    }
+                    const userEmail = decoded.userEmail;
+                    return res.json({status: "pass", message: "success", userEmail});
+               });
+          } catch (error) {
+               return res.json({status: "fail", message: "server error"});
+          }
+     },
+     resetPassword: async(req,res) => {
+          try {
+               const info = req.body;
+               const data = await new Promise((resolve, reject) => {
+                    db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+                         if (err) {
+                         reject(err);
+                         } else {
+                         resolve(result);
+                         }
+                    });
+               });
+
+               if(data[0]){
+                    const userId = data[0].user_id;
+                    bcrypt.hash(info.newPassword.toString(), salt, (err, hash) => {
+                         if(err) return res.json({status: "fail", message: "error changing the password"});
+                         db.query(userModel.queries.changePassword, [hash, userId],async (err) => {
+                              if(err) return dbErrorHandler(err, res, "user");
+                              await sendRecoveryMessage(info.email, info.newPassword);
+                              return res.json({status: "pass", message: "Password successfully reset"});
+                         });
+                    });
+                    
+               }
+               else{
+                    return res.json({status: "fail", message: "error resetting the password"});
+               }
+          } catch (error) {
+               return res.json({status: "fail", message:"server error"});
           }
      }
 

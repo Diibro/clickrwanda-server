@@ -14,6 +14,9 @@ userRouter.delete('/5', authenticateUser, (req,res) => userModel.deleteUser(req,
 
 userRouter.post('/login', (req,res) => userModel.login(req, res));
 userRouter.post('/rate-user', (req,res) => userModel.rateUser(req, res));
+userRouter.post('/request-password-reset', (req, res) => userModel.resetPasswordRequest(req, res));
+userRouter.post('/get-reset-email', (req, res) => userModel.getPasswordResetEmail(req, res));
+userRouter.post('/reset-password', (req, res) => userModel.resetPassword(req, res));
 // userRouter.post('/logout', (req, res) => userModel.logout(req, res));
 
 
