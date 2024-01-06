@@ -73,7 +73,7 @@ const userModel = {
                                    });
                               });
                          }else{
-                              return res.json({status: "fail"});
+                              return res.json({status: "fail", message: "invalid email"});
                          }
                     }else{
                          return res.json({status: "fail", message: "invalid email"});

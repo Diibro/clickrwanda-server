@@ -22,7 +22,6 @@ const sendWelcomeMessage = async(recipientemail) => {
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-               console.log(error);
                reject({ status: false, message: error });
                } else {
                resolve({ status: true, message: info });
