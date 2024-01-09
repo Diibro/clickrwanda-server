@@ -48,33 +48,29 @@ const userModel = {
                try {
                     const info = req.body;
                     const mailCheck = await sendWelcomeMessage(info.email);
-                    if(mailCheck.status){
-                         const user_id = uuidv4();
-                         const locationSample= JSON.stringify({location: info.location});
-                         let imageUploaded, imageUrl = unknownImage;
-                         if(req.file){
-                              imageUploaded = await uploadImage(req.file.path, folders.logos);
-                              if(imageUploaded.status){
-                                   imageUrl = imageUploaded.image;
-                              }
+                    const user_id = uuidv4();
+                    const locationSample= JSON.stringify({location: info.location});
+                    let imageUploaded, imageUrl = unknownImage;
+                    if(req.file){
+                         imageUploaded = await uploadImage(req.file.path, folders.logos);
+                         if(imageUploaded.status){
+                              imageUrl = imageUploaded.image;
                          }
-                         
-                         if(Object.keys(info).length > 0){
-                              bcrypt.hash(info.password.toString(), salt, (err, hash) => {
+                    }
+                    
+                    if(Object.keys(info).length > 0){
+                         bcrypt.hash(info.password.toString(), salt, (err, hash) => {
+                              if (err){
+                                   return res.json({status: "fail", message:"unable to complete account creation"});
+                              } 
+                              const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
+                              db.query(userModel.queries.createUser, values , (err) => {
                                    if (err){
-                                        return res.json({status: "fail", message:"unable to complete account creation"});
-                                   } 
-                                   const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
-                                   db.query(userModel.queries.createUser, values , (err) => {
-                                        if (err){
-                                             return dbErrorHandler(err, res, 'user');
-                                        }
-                                        return res.json({status: "pass", message: "Successfully created the account", imageUrl});
-                                   });
+                                        return dbErrorHandler(err, res, 'user');
+                                   }
+                                   return res.json({status: "pass", message: "Successfully created the account", imageUrl});
                               });
-                         }else{
-                              return res.json({status: "fail", message: "invalid email"});
-                         }
+                         });
                     }else{
                          return res.json({status: "fail", message: "invalid email"});
                     }
