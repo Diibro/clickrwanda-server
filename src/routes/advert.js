@@ -1,7 +1,7 @@
 const express = require('express');
 const advertRouter = express.Router();
 const advertModel = require('../models/advert.model');
-const { advertMultiUpload } = require('../middlewares/upload');
+const { advertMultiUpload, advertSingleUpload } = require('../middlewares/upload');
 const authenticateUser = require('../middlewares/auth');
 
 advertRouter.post('/1', (req, res) => advertModel.findAll(req, res));
@@ -17,5 +17,7 @@ advertRouter.post('/search-sub-category', (req,res) => advertModel.getSubCategor
 advertRouter.get('/get-user-adverts', authenticateUser, (req, res) => advertModel.getUserAds(req, res));
 advertRouter.post('/get-user-ads', (req, res) => advertModel.searchUserAds(req, res));
 advertRouter.post('/search-adverts', (req, res) => advertModel.searchAds(req, res));
+advertRouter.post('/search-user-ad', (req, res) => advertModel.searchUserAd(req, res));
+
 module.exports = advertRouter;
 

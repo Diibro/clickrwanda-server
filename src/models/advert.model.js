@@ -33,7 +33,8 @@ const advertModel = {
           // findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, c.sub_id, p.plan_name, u.full_name, u.user_location, u.profile_image from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id;",
           add: "insert into adverts (ad_id, ad_name, description, ad_image, ad_images, ad_type, ad_user_id, ad_price, sub_category_id,ad_date, contact ) values (?,?,?,?,?,?,?,?,?, NOW(),?)",
           search: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.contact, a.ad_views, a.ad_date, a.status, c.sub_id, c.sub_name, p.plan_name, u.user_id, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, date_format(u.reg_date, '%Y-%m-%d') as reg_date, category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on u.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where ad_id = ?;",
-          update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, ad_price = ? where ad_id = ?;",
+          searchAd: "select * from adverts where ad_id = ?",
+          update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, contact = ?, ad_price = ?  where ad_id = ? and ad_user_id = ?;",
           delete: "delete from adverts where ad_id = ? and ad_user_id = ?;",
           addAdView: "update adverts set ad_views = ? where ad_id = ?;",
           addAdDiscount: "update adverts set ad_discount = ? where ad_id = ?;"
@@ -68,27 +69,32 @@ const advertModel = {
      update: async(req, res) => {
           try {
                const info  = req.body;
+               const userId = req.userId;
                db.query(advertModel.queries.search, [info.ad_id], async (err, data) =>{
                     if(err){
                          return res.json({status: "fail", message: "unable to update the advert", err});
                     }
                     if(data[0]){
                          const ad = data[0]; 
-                         const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
+                         const ad_upload = req.files && req.files.image ? await uploadImage(req.files?.image[0].path, folders.adverts) : {};
+                         if(info.deleteMainImage && ad_upload.status){
+                              const deletedMain = await deleteImage(data[0].ad_image);
+                         }
                          let ad_image, other_images;
                          if(ad_upload.status){
                                ad_image = ad_upload.image;
                          }else{
                                ad_image = ad.ad_image;
                          }
-                         const otherImages = await uploadImages(req.files.otherImage, folders.adverts);
+                         const otherImages = req.files?.otherImage ? await uploadImages(req.files.otherImage, folders.adverts) : null;
                          if(otherImages && otherImages[0] != ''){
                               other_images = JSON.stringify(otherImages);
                          }else{
                               other_images =  JSON.stringify(ad.ad_images);
                          }
-                         const new_desc = JSON.stringify(info.ad_description || ad.description);
-                         const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.ad_plan_id || ad.ad_plan_id, info.contact || ad.contact, info.ad_price || ad.ad_price, info.ad_id ];
+                         const desc = info.description ? {desc: info.description} : null;
+                         const new_desc = JSON.stringify(desc || ad.description);
+                         const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.contact || ad.contact, info.ad_price || ad.ad_price, info.ad_id, userId ];
 
                          db.query(advertModel.queries.update, values, (err) => {
                               if(err) {
@@ -399,6 +405,21 @@ const advertModel = {
                return res.json({status: "pass", message:"success", data: adsFound});
           } catch (error) {
                return res.json({status: "fail", message: "Server error"});
+          }
+     },
+     searchUserAd: async(req, res) => {
+          try {
+               const info = req.body;
+               db.query(advertModel.queries.searchAd, [info.ad_id], (err, result) => {
+                    if(err) return dbErrorHandler(err, res, "advert");
+                    if(result[0]){
+                         return res.json({status: "pass", message: "advert found", data: result[0]});
+                    }else{
+                         return res.json({status: "fail", message: "advert not found"});
+                    }
+               })
+          } catch (error) {
+               return res.json({status: "fail", message: "server error"});
           }
      }
 };

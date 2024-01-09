@@ -19,6 +19,8 @@ const advertUpload = multer({storage, fileFilter, limits: {fileSize: 20000000}})
 const payPlanUpload = multer({storage, fileFilter, limits: {fileSize: 20000000}}).single('image');
 const categoryUpload = multer({storage, fileFilter, limits: {fileSize: 20000000}}).single('image');
 
+const advertSingleUpload = advertUpload.single('image');
+
 const advertMultiUpload = advertUpload.fields([{name: 'image', maxCount: 2}, {name: 'otherImage', maxCount: 6}]);
 
-module.exports = {logoUpload, advertMultiUpload, payPlanUpload, categoryUpload};
+module.exports = {logoUpload, advertMultiUpload, payPlanUpload, categoryUpload, advertSingleUpload};
