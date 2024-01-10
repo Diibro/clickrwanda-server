@@ -24,6 +24,7 @@ const userModel = {
           updateUserRating: "update users set rating = ? where user_id = ?",
           getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
           getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?",
+          getBestSellers: "select u.user_id, u.username, u.full_name, u.user_phone, p.plan_name from users u inner join payment_plan p on u.ad_plan_id = p.plan_id where p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%';",
           changePassword: "update users set user_password = ? where user_id = ? ;"
      },
      findAll: async(req, res) => {
