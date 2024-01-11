@@ -118,17 +118,31 @@ const advertModel = {
                let adsFetched = [];
                let boostedAds = [];
                let bestSellers = [];
+               let bestViewed = [];
                let totalAds = 0;
+               const sellerIds = new Set();
                await Promise.all([
                     info.boostSellers ? 
                     new Promise(resolve => {
                          db.query(userModel.queries.getBestSellers, (err, data) => {
                               if(err) bestSellers = [];
-                              else bestSellers = data[0] ? data : "no data found";
+                              else bestSellers = data[0] ? data : [];
+                              bestSellers.forEach(item => sellerIds.add(item.user_id));
                               resolve();
                          });
                     })
                     : null,
+                    info.boostSellers ? 
+                    new Promise(resolve => {
+                         db.query(userModel.queries.getBestViewedUsers,(err, data) =>{
+                              if(data[0]){
+                                   const result = bestSellers[0] ? data.filter(item => !sellerIds.has(item.user_id)) : data;
+                                   bestViewed = result;
+                              }
+                              resolve()
+                         })
+                    })
+                    :null,
                     info.boost ?
                     new Promise(resolve => {
                          db.query(advertModel.queries.findBoosted, [info.boost], (err, result) => {
@@ -155,7 +169,7 @@ const advertModel = {
                          resolve();
                     }) ) : null
                ]); 
-               return res.json({status:"pass", message:"success",data: {generalAds:adsFetched[0] ? adsFetched : "no data found", boostedAds, bestSellers}, totalAds});
+               return res.json({status:"pass", message:"success",data: {generalAds:adsFetched[0] ? adsFetched : "no data found", boostedAds, bestSellers: [...bestSellers, ...bestViewed]}, totalAds});
           }catch(error){
                return res.json({status:"fail", message:"server error", error});
           }
