@@ -49,7 +49,7 @@ const userModel = {
                
                try {
                     const info = req.body;
-                    const mailCheck = await sendWelcomeMessage(info.email);
+                    // const mailCheck = await sendWelcomeMessage(info.email);
                     const user_id = uuidv4();
                     const locationSample= JSON.stringify({location: info.location});
                     let imageUploaded, imageUrl = unknownImage;
