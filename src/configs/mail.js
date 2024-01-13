@@ -4,16 +4,18 @@ const transporter = nodemailer.createTransport({
      host: 'smtp.office365.com',
      port: 587,
      secure: false,
+     requireTLS:true,
      auth: {
      user: process.env.EMAIL_USER,
      pass: process.env.EMAIL_PASS,
      },
+     from: `${process.env.EMAIL_USER}`,
 });
 
 
 const sendWelcomeMessage = async(recipientemail) => {
      let options = {
-          from: process.env.EMAIL_USER,
+          from: `Click Rwanda <${process.env.EMAIL_USER}>`,
           to: recipientemail,
           subject: "Account Registration Successfull",
           text: "Your account has been registered successfully"
@@ -22,7 +24,8 @@ const sendWelcomeMessage = async(recipientemail) => {
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-               reject({ status: false, message: error });
+                    console.log(error);
+               resolve({ status: false, message: error });
                } else {
                resolve({ status: true, message: info });
                }

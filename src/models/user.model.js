@@ -49,7 +49,6 @@ const userModel = {
                
                try {
                     const info = req.body;
-                    // const mailCheck = await sendWelcomeMessage(info.email);
                     const user_id = uuidv4();
                     const locationSample= JSON.stringify({location: info.location});
                     let imageUploaded, imageUrl = unknownImage;
@@ -66,11 +65,12 @@ const userModel = {
                                    return res.json({status: "fail", message:"unable to complete account creation"});
                               } 
                               const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
-                              db.query(userModel.queries.createUser, values , (err) => {
+                              db.query(userModel.queries.createUser, values ,async (err) => {
                                    if (err){
                                         return dbErrorHandler(err, res, 'user');
                                    }
-                                   return res.json({status: "pass", message: "Successfully created the account", imageUrl});
+                                   const mailCheck = await sendWelcomeMessage(info.email);
+                                   return res.json({status: "pass", message: `Successfully created the account. ${mailCheck.status && 'Check your email'}`, imageUrl});
                               });
                          });
                     }else{
