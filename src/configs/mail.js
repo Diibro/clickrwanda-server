@@ -35,7 +35,7 @@ const sendWelcomeMessage = async(recipientemail) => {
 
 const sendPassWordRecovery = async(recipientemail, token) => {
      let options = {
-          from: process.env.EMAIL_USER,
+          from: `Click Rwanda <${process.env.EMAIL_USER}>`,
           to: recipientemail,
           subject: "Password Reset",
           text: `Click the this link to reset your password: https://clickrwanda.com/accounts/reset?=${token}`
@@ -55,7 +55,7 @@ const sendPassWordRecovery = async(recipientemail, token) => {
 
 const sendRecoveryMessage = async(recipientemail, newPassword) => {
      let options = {
-          from: process.env.EMAIL_USER,
+          from: `Click Rwanda <${process.env.EMAIL_USER}>`,
           to: recipientemail,
           subject: "Password Reset Successfull",
           text: `Your message has been reset. `,
