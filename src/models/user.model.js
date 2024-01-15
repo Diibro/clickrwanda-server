@@ -69,8 +69,8 @@ const userModel = {
                                    if (err){
                                         return dbErrorHandler(err, res, 'user');
                                    }
-                                   const mailCheck = await sendWelcomeMessage(info.email);
-                                   return res.json({status: "pass", message: `Successfully created the account. ${mailCheck.status && 'Check your email'}`, imageUrl});
+                                   // const mailCheck = await sendWelcomeMessage(info.email);
+                                   return res.json({status: "pass", message: `Successfully created the account.`});
                               });
                          });
                     }else{
