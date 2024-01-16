@@ -12,7 +12,8 @@ const folders = {
      adverts: 'clickrwanda/adverts',
      categories: 'clickrwanda/categories',
      logos: 'clickrwanda/logos',
-     payplans: 'clickrwanda/pay-plans'
+     payplans: 'clickrwanda/pay-plans',
+     quotations: 'clickrwanda/quotations',
 }
 
 module.exports = {cloudinary, folders};

@@ -33,6 +33,34 @@ const sendWelcomeMessage = async(recipientemail) => {
      });
 }
 
+const sendNewQuotation = async(quote) => {
+     let options = {
+          from: `Click Rwanda <${process.env.EMAIL_USER}>`,
+          to: 'brother.dushime@gmail.com',
+          subject: "New Quotaton submitted",
+          html: `
+               <h2>Quote type: ${quote.type}</h2>
+               <p><b>Customer Email:</b>Customer Email: <a href='mailto:${quote.email}'>${quote.email}</a></p>
+               <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
+               <p>For more information <a href='${quote.file}'>click here </a></p>
+               <p>${quote.description}</p>
+               <embed src='${quote.file}' type="application/pdf" width="300px" height="600px" />
+
+          `
+     }
+
+     return new Promise((resolve, reject) => {
+          transporter.sendMail(options, (error, info) => {
+               if (error) {
+                    console.log(error);
+               resolve({ status: false, message: error });
+               } else {
+               resolve({ status: true, message: info });
+               }
+          });
+     });
+}
+
 const sendPassWordRecovery = async(recipientemail, token) => {
      let options = {
           from: `Click Rwanda <${process.env.EMAIL_USER}>`,
@@ -80,5 +108,6 @@ const sendRecoveryMessage = async(recipientemail, newPassword) => {
 module.exports = {
      sendWelcomeMessage,
      sendPassWordRecovery,
-     sendRecoveryMessage
+     sendRecoveryMessage,
+     sendNewQuotation
 }
