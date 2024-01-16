@@ -44,9 +44,13 @@ const sendNewQuotation = async(quote) => {
                <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
                <p>For more information <a href='${quote.file}'>click here </a></p>
                <p>${quote.description}</p>
-               <embed src='${quote.file}' type="application/pdf" width="300px" height="600px" />
-
-          `
+          `,
+          attachments: [
+               {
+                 filename: 'quotation.pdf',
+                 path: quote.file,
+               },
+             ],
      }
 
      return new Promise((resolve, reject) => {
