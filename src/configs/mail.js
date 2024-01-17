@@ -51,7 +51,6 @@ const sendNewQuotation = async(quote) => {
                     <h2>Quote type: ${quote.type}</h2>
                     <p><b>Customer Email:</b>Customer Email: <a href='mailto:${quote.email}'>${quote.email}</a></p>
                     <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
-                    <p>For more information <a href='${quote.file}'>click here </a></p>
                     <h2>Description:</h2>
                     <p>${quote.description}</p>
                </body>
@@ -60,10 +59,10 @@ const sendNewQuotation = async(quote) => {
           `,
           attachments: [
                {
-                 filename: 'quotation.pdf',
+                 filename: `${quote.email} -- RFQ.pdf`,
                  path: quote.file,
                },
-             ],
+             ]
      } : {
           from: `Click Rwanda <${process.env.EMAIL_USER}>`,
           to: 'brother.dushime@gmail.com',
