@@ -35,7 +35,7 @@ const sendWelcomeMessage = async(recipientemail) => {
 const sendNewQuotation = async(quote) => {
      let options = quote.file ? {
           from: `Click Rwanda <${process.env.EMAIL_USER}>`,
-          to: 'brother.dushime@gmail.com',
+          to: 'clickrwandaltd@gmail.com',
           subject: "New RFQ submission",
           html: `
                <html>
