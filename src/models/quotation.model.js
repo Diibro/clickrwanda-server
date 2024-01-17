@@ -44,7 +44,6 @@ const quotationModel = {
                     const file_uploaded = file_upload.image;
                     const values = [quote_id, info.email, info.phone,file_uploaded, info.quote_date,info.quote_type, info.description];
                     const mailSent = await sendNewQuotation({type: info.quote_type,email: info.email, phone:info.phone, file: file_uploaded, description:info.description});
-                    console.log(mailSent);
                     db.query(quotationModel.queries.addNew ,values, (err) => {
                          if(err) return dbErrorHandler(err,res,'quotation');
                          else return res.json({status: 'pass', message: 'Quotation submitted successfully'});
