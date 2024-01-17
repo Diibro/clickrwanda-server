@@ -6,7 +6,7 @@ const uploadImage = (imagePath, folderPath) => {
           const opts = {folder: folderPath};
           cloudinary.uploader.upload(imagePath, opts, (error, result) => {
                if(error){
-                    reject({status: false, image: ''});
+                    resolve({status: false, image: ''});
                }
                resolve({status:true, image: result.url});
           })

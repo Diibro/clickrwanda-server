@@ -39,21 +39,26 @@ const quotationModel = {
           try {
                const info = req.body;
                const quote_id = uuidv4();
-               const file_upload = await uploadImage(req.file.path, folders.quotations);
+               const file_upload = req.file ? await uploadImage(req.file.path, folders.quotations) : "";
                if(file_upload.status){
                     const file_uploaded = file_upload.image;
                     const values = [quote_id, info.email, info.phone,file_uploaded, info.quote_date,info.quote_type, info.description];
                     const mailSent = await sendNewQuotation({type: info.quote_type,email: info.email, phone:info.phone, file: file_uploaded, description:info.description});
+                    console.log(mailSent);
                     db.query(quotationModel.queries.addNew ,values, (err) => {
                          if(err) return dbErrorHandler(err,res,'quotation');
                          else return res.json({status: 'pass', message: 'Quotation submitted successfully'});
                     })
                }else{
-                    return res.json({status:'fail', message: "failed to upload the file.  Try again"});
+                    const values = [quote_id, info.email, info.phone,file_upload, info.quote_date,info.quote_type, info.description];
+                    const mailSent = await sendNewQuotation({type: info.quote_type,email: info.email, phone:info.phone, file: null, description:info.description});
+                    db.query(quotationModel.queries.addNew ,values, (err) => {
+                         if(err) return dbErrorHandler(err,res,'quotation');
+                         else return res.json({status: 'pass', message: 'Quotation submitted successfully'});
+                    })
                }
                
           } catch (error) {
-               console.log(error);
                return res.json({status: 'fail', message: 'server error'});
           }
      }

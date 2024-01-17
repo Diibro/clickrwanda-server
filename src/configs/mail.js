@@ -24,26 +24,39 @@ const sendWelcomeMessage = async(recipientemail) => {
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-                    console.log(error);
-               resolve({ status: false, message: error });
+                    resolve({ status: false, message: error });
                } else {
-               resolve({ status: true, message: info });
+                    resolve({ status: true, message: info });
                }
           });
      });
 }
 
 const sendNewQuotation = async(quote) => {
-     let options = {
+     let options = quote.file ? {
           from: `Click Rwanda <${process.env.EMAIL_USER}>`,
           to: 'brother.dushime@gmail.com',
-          subject: "New Quotaton submitted",
+          subject: "New RFQ submission",
           html: `
-               <h2>Quote type: ${quote.type}</h2>
-               <p><b>Customer Email:</b>Customer Email: <a href='mailto:${quote.email}'>${quote.email}</a></p>
-               <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
-               <p>For more information <a href='${quote.file}'>click here </a></p>
-               <p>${quote.description}</p>
+               <html>
+               <head>
+               <style>
+                    h2, p, b{
+                         color:black;
+                         font-size: 14px;
+                    }
+               </style>
+               </head>
+               <body>
+                    <h2>Quote type: ${quote.type}</h2>
+                    <p><b>Customer Email:</b>Customer Email: <a href='mailto:${quote.email}'>${quote.email}</a></p>
+                    <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
+                    <p>For more information <a href='${quote.file}'>click here </a></p>
+                    <h2>Description:</h2>
+                    <p>${quote.description}</p>
+               </body>
+               </html>
+               
           `,
           attachments: [
                {
@@ -51,15 +64,38 @@ const sendNewQuotation = async(quote) => {
                  path: quote.file,
                },
              ],
+     } : {
+          from: `Click Rwanda <${process.env.EMAIL_USER}>`,
+          to: 'brother.dushime@gmail.com',
+          subject: "New RFQ submission",
+          html: `
+          <html>
+          <head>
+          <style>
+               h2, p, b{
+                    color:black;
+                    font-size: 14px;
+               }
+          </style>
+          </head>
+          <body>
+               <h2>Quote type: ${quote.type}</h2>
+               <p><b>Customer Email:</b>Customer Email: <a href='mailto:${quote.email}'>${quote.email}</a></p>
+               <p><b>Customer Phone Number:</b>Customer Phone Number: <a href='tel:${quote.phone}'>${quote.phone}</a></p>
+               <p>For more information <a href='${quote.file}'>click here </a></p>
+               <h2>Description:</h2>
+               <p>${quote.description}</p>
+          </body>
+          </html>
+          `
      }
 
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-                    console.log(error);
-               resolve({ status: false, message: error });
+                    resolve({ status: false, message: error });
                } else {
-               resolve({ status: true, message: info });
+                    resolve({ status: true, message: info });
                }
           });
      });
@@ -76,10 +112,9 @@ const sendPassWordRecovery = async(recipientemail, token) => {
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-               console.log(error);
-               reject({ status: false, message: error });
+                    resolve({ status: false, message: error });
                } else {
-               resolve({ status: true, message: info });
+                    resolve({ status: true, message: info });
                }
           });
      });
@@ -100,8 +135,7 @@ const sendRecoveryMessage = async(recipientemail, newPassword) => {
      return new Promise((resolve, reject) => {
           transporter.sendMail(options, (error, info) => {
                if (error) {
-               console.log(error);
-               reject({ status: false, message: error });
+               resolve({ status: false, message: error });
                } else {
                resolve({ status: true, message: info });
                }
