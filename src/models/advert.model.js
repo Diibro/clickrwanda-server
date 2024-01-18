@@ -24,6 +24,7 @@ const advertModel = {
           findAllPaged: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_id like 'plan_001' order by a.ad_date desc limit 50 offset ?; ",
           findBoosted: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%' order by a.ad_date  desc limit ?;",
           findDiscounts: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_discount > 1 order by a.ad_date  desc limit ?;",
+          findWebsites: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_website is not null order by a.ad_date desc limit ?;",
           // searchAdverts: "select (char_length(a.ad_name) - char_length(replace(a.ad_name, ?, ''))) / char_length(?) * 100 as inclusion_percentage, a.ad_id, a.ad_name, a.ad_image, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_name, p.plan_name, u.full_name, u.user_location,u.user_phone, u.user_email, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') order by inclusion_percentage desc;",
           searchAdverts: "select (char_length(a.ad_name) - char_length(replace(a.ad_name, ?, ''))) / char_length(?) * 100 as inclusion_percentage, a.ad_id, a.ad_name, a.ad_image, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_name, p.plan_name, u.full_name, u.user_location,u.user_phone, u.user_email, category.category_id,category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') order by inclusion_percentage desc;",
           searchAdvertsSub: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating,category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where c.sub_id in (select sub_id from sub_category where sub_name like concat('%', ?, '%'));",
@@ -121,6 +122,7 @@ const advertModel = {
                let bestSellers = [];
                let bestViewed = [];
                let discounted = [];
+               let adWebsites = [];
                let totalAds = 0;
                const sellerIds = new Set();
                await Promise.all([
@@ -176,9 +178,16 @@ const advertModel = {
                          if(err) totalAds = 0;
                          else totalAds = parseInt(data[0].totalAdverts);
                          resolve();
-                    }) ) : null
+                    }) ) : null,
+                    info.website ? 
+                    new Promise((resolve) => db.query(advertModel.queries.findWebsites, [info.website], (err,data)=> {
+                         if(err) adWebsites = [];
+                         else adWebsites = data;
+                         resolve();
+                    }))
+                    : null
                ]); 
-               return res.json({status:"pass", message:"success",data: {generalAds:adsFetched[0] ? adsFetched : "no data found", boostedAds, bestSellers: [...bestSellers, ...bestViewed],discounted}, totalAds});
+               return res.json({status:"pass", message:"success",data: {generalAds:adsFetched[0] ? adsFetched : "no data found", boostedAds, bestSellers: [...bestSellers, ...bestViewed],discounted, adWebsites}, totalAds});
           }catch(error){
                return res.json({status:"fail", message:"server error", error});
           }
