@@ -16,6 +16,139 @@ const advertModel = {
                const offsetValue = (page - 1) * 50;
                return{sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id order by a.ad_date desc limit 50 offset ?;`, values: [offsetValue]};
           },
+          findSearched: (searched) => {
+               const {location, category,search, page,option} = searched;
+               const offsetValue = searched.page ? (searched.page - 1) * 50 : 0; 
+               if(location == "Rwanda" && category == "All"){
+                    if(option === "all"){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_id like 'plan_001' order by a.ad_date desc limit 50 offset ?; `, values: [offsetValue] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_id like 'plan_001' and a.ad_name like concat('%',?,'%') order by a.ad_date desc limit 50 offset ?;`, values: [search, offsetValue]}
+                         }
+                    }else if(option === 'websites'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_website is not null order by a.ad_date desc limit 50;`, }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_website is not null and a.ad_name like concat('%',?,'%')  order by a.ad_date desc limit 50;`, values: [search]}
+                         }
+                    }else if(option === 'vendors'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id limit 50;` }
+                         }else{
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id  where u.full_name like concat('%',?,'%') or u.username like concat('%',?,'%') or u.user_email like concat('%',?,'%') or u.user_phone like concat('%',?,'%') group by u.user_id limit 50;`, values: [search, search,search,search] }
+                         }
+                    }else if(option === 'deals'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_discount > 1 order by a.ad_date  desc limit 50;` }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_discount > 1 and a.ad_name like concat('%',?,'%') order by a.ad_date  desc limit 50;`, values: [search] }
+                         }
+                    }else if(option === 'featured'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%' order by a.ad_date  desc limit 50;` }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where a.ad_name like concat('%',?,'%') and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`, values: [search] }
+                         }
+                    }
+               }else if (location === "Rwanda" && category !== "All"){
+                    if(option === "all"){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_id like 'plan_001' and category.category_id = ? order by a.ad_date desc limit 50 offset ?; `, values: [category,offsetValue] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where p.plan_id like 'plan_001' and category.category_id = ? and a.ad_name like concat('%',?,'%') order by a.ad_date desc limit 50 offset ?;`, values: [category,search, offsetValue]}
+                         }
+                    }else if(option === 'websites'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where  category.category_id = ? and a.ad_website is not null order by a.ad_date desc limit 50;`, values:[category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where  category.category_id = ? and a.ad_website is not null and a.ad_name like concat('%',?,'%')  order by a.ad_date desc limit 50;`, values: [category,search]}
+                         }
+                    }else if(option === 'vendors'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id limit 50;` }
+                         }else{
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id  where u.full_name like concat('%',?,'%') or u.username like concat('%',?,'%') or u.user_email like concat('%',?,'%') or u.user_phone like concat('%',?,'%') group by u.user_id limit 50;`, values: [search, search,search,search] }
+                         }
+                    }else if(option === 'deals'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where  category.category_id = ? and a.ad_discount > 1 order by a.ad_date  desc limit 50;`, values: [category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where  category.category_id = ? and a.ad_discount > 1 and a.ad_name like concat('%',?,'%') order by a.ad_date  desc limit 50;`, values: [category,search] }
+                         }
+                    }else if(option === 'featured'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where  category.category_id = ? and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`,values: [category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where category.category_id = ? and a.ad_name like concat('%',?,'%') and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`, values: [category,search] }
+                         }
+                    }
+               }else if (category === "All" && location !== "Rwanda"){
+                    if(option === "all"){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and p.plan_id like 'plan_001' order by a.ad_date desc limit 50 offset ?; `, values: [location,offsetValue] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and p.plan_id like 'plan_001' and a.ad_name like concat('%',?,'%') order by a.ad_date desc limit 50 offset ?;`, values: [location,search, offsetValue]}
+                         }
+                    }else if(option === 'websites'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and a.ad_website is not null order by a.ad_date desc limit 50;`,values:[location] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and a.ad_website is not null and a.ad_name like concat('%',?,'%')  order by a.ad_date desc limit 50;`, values: [location,search]}
+                         }
+                    }else if(option === 'vendors'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') group by u.user_id limit 50;`,values:[location] }
+                         }else{
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id  where json_extract(u.user_location, '$.location') like concat('%',?,'%') and (u.full_name like concat('%',?,'%') or u.username like concat('%',?,'%') or u.user_email like concat('%',?,'%') or u.user_phone like concat('%',?,'%')) group by u.user_id limit 50;`, values: [location,search, search,search,search] }
+                         }
+                    }else if(option === 'deals'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and a.ad_discount > 1 order by a.ad_date  desc limit 50;`,values:[location] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and a.ad_discount > 1 and a.ad_name like concat('%',?,'%') order by a.ad_date  desc limit 50;`, values: [location,search] }
+                         }
+                    }else if(option === 'featured'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;` ,values:[location] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and a.ad_name like concat('%',?,'%') and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`, values: [location,search] }
+                         }
+                    }
+               }else {
+                    if(option === "all"){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and p.plan_id like 'plan_001' order by a.ad_date desc limit 50 offset ?; `, values: [location,category,offsetValue] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and p.plan_id like 'plan_001' and a.ad_name like concat('%',?,'%') order by a.ad_date desc limit 50 offset ?;`, values: [location,category,search, offsetValue]}
+                         }
+                    }else if(option === 'websites'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and a.ad_website is not null order by a.ad_date desc limit 50;`,values:[location, category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, a.ad_website, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and a.ad_website is not null and a.ad_name like concat('%',?,'%')  order by a.ad_date desc limit 50;`, values: [location,category,search]}
+                         }
+                    }else if(option === 'vendors'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id limit 50;` }
+                         }else{
+                              return {sql: `select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.user_email, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id  where u.full_name like concat('%',?,'%') or u.username like concat('%',?,'%') or u.user_email like concat('%',?,'%') or u.user_phone like concat('%',?,'%') group by u.user_id limit 50;`, values: [search, search,search,search] }
+                         }
+                    }else if(option === 'deals'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and a.ad_discount > 1 order by a.ad_date  desc limit 50;`, values:[location, category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and a.ad_discount > 1 and a.ad_name like concat('%',?,'%') order by a.ad_date  desc limit 50;`, values: [location,category,search] }
+                         }
+                    }else if(option === 'featured'){
+                         if(!search || search === null || search === ""){
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`, values:[location, category] }
+                         }else{
+                              return {sql: `select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where json_extract(u.user_location, '$.location') like concat('%',?,'%') and category.category_id = ? and a.ad_name like concat('%',?,'%') and (p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%') order by a.ad_date  desc limit 50;`, values: [location, category, search] }
+                         }
+                    }
+               }
+          },
           testFind: 'select * from adverts',
           countAll: "select count(*) as totalAdverts from adverts where ad_plan_id = 'plan_001';",
           findAll: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.ad_date, a.status, a.contact, a.ad_views, c.sub_id, c.sub_name, p.plan_name, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, category.category_name, category.category_id from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id order by a.ad_date desc limit 50 ;",
@@ -393,72 +526,17 @@ const advertModel = {
      searchAds: async(req, res) => {
           try {
                const info = req.body;
-               const {searched} = info;
                const adsFound = {};
-
                const uniqueAds = new Set();
-               await Promise.all([
-                    new Promise((resolve) => {
-                         db.query(advertModel.queries.searchAdverts, [searched, searched, searched], (err, result) => {
-                              if(err) adsFound.ads = null;
-                              if (Array.isArray(result)) {
-                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
-                                   adsFound.ads = uniqueAdsResult[0] ? uniqueAdsResult : null;
-                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
-                               } else {
-                                   adsFound.ads = null;
-                               }
-                              resolve();
-                         })
-                    }),
-                    new Promise((resolve) => {
-                         db.query(advertModel.queries.searchAdvertsSub, [searched], (err, result) => {
-                              if(err) {
-                                   adsFound.sub = null
-                              }
-                              if (Array.isArray(result)) {
-                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
-                                   adsFound.sub = uniqueAdsResult[0] ? uniqueAdsResult : null;
-                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
-                               } else {
-                                   adsFound.sub = null;
-                               }
-                              
-                              resolve();
-                         })
-                    }),
-                    new Promise((resolve) => {
-                         db.query(advertModel.queries.searchAdvertsCat, [searched], (err, result) => {
-                              if(err) {
-                                   adsFound.cat = null;
-                              }
-                              if (Array.isArray(result)) {
-                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
-                                   adsFound.cat = uniqueAdsResult[0] ? uniqueAdsResult : null;
-                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
-                               } else {
-                                   adsFound.cat = null;
-                               }
-                              resolve();
-                         })
-                    }),
-                    new Promise((resolve) => {
-                         db.query(advertModel.queries.searchAdvertsUser, [searched, searched], (err, result) => {
-                              if(err) {
-                                   adsFound.user = null;
-                              }
-                              if (Array.isArray(result)) {
-                                   const uniqueAdsResult = result.filter(ad => !uniqueAds.has(ad.ad_id));
-                                   adsFound.user = uniqueAdsResult[0] ? uniqueAdsResult : null;
-                                   uniqueAdsResult.forEach(ad => uniqueAds.add(ad.ad_id));
-                              } else {
-                                   adsFound.user = null;
-                              }
-                              resolve();
-                         })
-                    }),
-               ]);
-               return res.json({status: "pass", message:"success", data: adsFound});
+               const fetched = await new  Promise(resolve => {
+                    db.query(advertModel.queries.findSearched(info), (err, data) => {
+                         if(err) console.log(err);
+                         // if(err) return dbErrorHandler(err, res, 'adverts');
+                         resolve(data);
+                    })
+               })
+
+               return res.json({status: "pass", message:"success", data: fetched});
           } catch (error) {
                return res.json({status: "fail", message: "Server error"});
           }
