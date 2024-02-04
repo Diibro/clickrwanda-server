@@ -185,7 +185,7 @@ const advertModel = {
                const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
                if(ad_upload.status){
                     const ad_image = ad_upload.image;
-                    let other_images = await uploadImages(req.files.otherImage, folders.adverts);
+                    let other_images =req.files.otherImage ? await uploadImages(req.files.otherImage, folders.adverts) : [];
                     let ad_images = JSON.stringify(other_images);
                     const values = [ad_id, info.ad_name, ad_description, ad_image, ad_images,info.ad_type, req.userId, info.ad_price, info.sub_category_id, info.contact ];
                     db.query(advertModel.queries.add, values, (err) => {
