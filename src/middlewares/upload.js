@@ -22,6 +22,6 @@ const fileUpload = multer({storage}).single('file');
 
 const advertSingleUpload = advertUpload.single('image');
 
-const advertMultiUpload = advertUpload.fields([{name: 'image', maxCount: 2}, {name: 'otherImage', maxCount: 6}]);
+const advertMultiUpload = advertUpload.fields([{name: 'image', maxCount: 1}, {name: 'otherImage', maxCount: 4}]);
 
 module.exports = {logoUpload, advertMultiUpload, payPlanUpload, categoryUpload, advertSingleUpload, fileUpload};
