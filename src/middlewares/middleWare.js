@@ -6,9 +6,9 @@ const checkPayloadSize = require('./requestCheck');
 
 const middleWares = (app) => {
      app.use(corsMiddleWare());
+     app.use(compression());
      app.use(checkPayloadSize);
      app.use(cookieParser());
-     app.use(compression());
      app.use(express.urlencoded({extended:true}));
      app.use(express.json());
      app.use('/public',express.static('./public'));
