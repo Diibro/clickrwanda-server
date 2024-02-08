@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "forever start index.js",
+    "stopServer": "forever stop index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [
