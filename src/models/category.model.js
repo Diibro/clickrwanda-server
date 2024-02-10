@@ -18,16 +18,18 @@ const categoryModel = {
           try {
                db.query(categoryModel.queries.selectAll, (error, data) => {
                     if(error){
-                         return res.json({status: "Error", message: "server error"});
+                         console.error(error);
+                         return res.status(500).json({status: "Error", message: "server error"});
                     }
                     if(data[0]){
-                         return res.json({status: "pass", message: "success", data});
+                         return res.status(200).json({status: "pass", message: "success", data});
                     }else{
                          return res.json({statu: "pass", message: "no data found"});
                     }
 
                } )
           } catch (error) {
+               console.error(error);
                return error;
           }
      },

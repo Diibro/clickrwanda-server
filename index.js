@@ -1,3 +1,9 @@
+process.on('uncaughtException', (error) => {
+     console.error('Uncaught Exception:', error);
+     process.exit(1);
+   });
+
+
 const express = require('express');
 require('dotenv').config();
 const db = require('./src/configs/database.config');
