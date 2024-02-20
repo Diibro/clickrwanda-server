@@ -25,3 +25,14 @@ const connectionOptions = () => {
 const dbConnection =  mysql2.createConnection(connectionOptions());
 
 module.exports = dbConnection;
+
+// const pool = mysql2.createPool({
+//   ...connectionOptions(), // Use your existing connection options here
+//   waitForConnections: true,
+//   connectionLimit: 1000, // Adjust as needed
+//   queueLimit: 0
+// });
+
+// const dbConnection = pool.promise().getConnection();
+
+// module.exports = dbConnection;
