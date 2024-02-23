@@ -6,7 +6,7 @@ process.on('uncaughtException', (error) => {
 
 const express = require('express');
 require('dotenv').config();
-const db = require('./src/configs/database.config');
+const {dbConnection: db} = require('./src/configs/database.config');
 const mainRouter = require('./src/routes/index');
 const middleWares = require('./src/middlewares/middleWare');
 

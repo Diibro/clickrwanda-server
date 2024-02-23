@@ -1,4 +1,4 @@
-const db = require('../configs/database.config');
+const {dbConnection: db} = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
 
 const payMethodModel = {

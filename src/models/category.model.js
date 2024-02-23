@@ -1,4 +1,4 @@
-const db = require('../configs/database.config');
+const {dbConnection: db} = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
 const { uploadImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');

@@ -1,5 +1,14 @@
 const mysql2 = require('mysql2');
 
+class Database {
+     constructor(){
+          this.con = mysql2.createConnection(connectionOptions());
+     }
+
+     destructor(){
+
+     }
+}
 const connectionOptions = () => {
      let options = {};
      if(process.env.NODE_ENV === "production"){
@@ -22,17 +31,8 @@ const connectionOptions = () => {
      return options;
 }
 
-const dbConnection =  mysql2.createConnection(connectionOptions());
 
-module.exports = dbConnection;
 
-// const pool = mysql2.createPool({
-//   ...connectionOptions(), // Use your existing connection options here
-//   waitForConnections: true,
-//   connectionLimit: 1000, // Adjust as needed
-//   queueLimit: 0
-// });
+let dbConnection =  new Database().con;
 
-// const dbConnection = pool.promise().getConnection();
-
-// module.exports = dbConnection;
+module.exports = {dbConnection, Database};

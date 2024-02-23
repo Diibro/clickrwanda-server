@@ -1,4 +1,4 @@
-const db = require('../configs/database.config');
+const {dbConnection: db} = require('../configs/database.config');
 const dbErrorHandler = require('../middlewares/dbError');
 
 const payPlanModel = {
