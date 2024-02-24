@@ -1,4 +1,4 @@
-const {dbConnection: db, Database}= require("../configs/database.config")
+let {dbConnection: db, Database}= require("../configs/database.config")
 
 const checkDbConnection = (req, res, next) => {
      try {
