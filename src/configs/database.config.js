@@ -5,8 +5,8 @@ class Database {
           this.con = mysql2.createConnection(connectionOptions());
      }
 
-     destructor(){
-
+     static reInit(){
+          this.con = mysql2.createConnection(connectionOptions());
      }
 }
 const connectionOptions = () => {
@@ -33,6 +33,6 @@ const connectionOptions = () => {
 
 
 
-let dbConnection =  new Database().con;
+const dbConnection =  new Database().con;
 
 module.exports = {dbConnection, Database};
