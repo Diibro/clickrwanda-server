@@ -2,11 +2,17 @@ const mysql2 = require('mysql2');
 
 class Database {
      constructor(){
-          this.con = mysql2.createConnection(connectionOptions());
+          this.con = mysql2.createConnection({...connectionOptions(), enableKeepAlive:true, keepAliveInitialDelay:30000});
      }
 
-     static reInit(){
-          this.con = mysql2.createConnection(connectionOptions());
+     static async reInit(){
+          this.con && this.con.end((error) => {
+               if(error){
+                    console.error("Error closing connection",error);
+               }
+               this.con = mysql2.createConnection({...connectionOptions(), enableKeepAlive:true, keepAliveInitialDelay:30000});
+          });
+          
      }
 }
 const connectionOptions = () => {

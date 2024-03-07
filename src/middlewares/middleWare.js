@@ -4,7 +4,7 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const checkPayloadSize = require('./requestCheck');
 const morgan = require('morgan');
-const checkDbConnection = require('./checkDbConnection');
+// const checkDbConnection = require('./checkDbConnection');
 
 const middleWares = (app) => {
      app.use(corsMiddleWare());
@@ -15,7 +15,7 @@ const middleWares = (app) => {
      app.use(express.json());
      app.use(morgan('tiny'))
      app.use('/public',express.static('./public'));
-     app.use(checkDbConnection);
+     // app.use(checkDbConnection);
 }
 
 

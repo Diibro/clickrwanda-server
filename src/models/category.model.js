@@ -24,7 +24,7 @@ const categoryModel = {
                     if(data[0]){
                          return res.status(200).json({status: "pass", message: "success", data});
                     }else{
-                         return res.json({statu: "pass", message: "no data found"});
+                         return res.json({status: "pass", message: "no data found"});
                     }
 
                } )
