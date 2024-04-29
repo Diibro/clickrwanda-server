@@ -65,7 +65,7 @@ const sendNewQuotation = async(quote) => {
              ]
      } : {
           from: `Click Rwanda <${process.env.EMAIL_USER}>`,
-          to: 'clickrwandaltd@gmail.com',
+          to: 'clickrwandaltd@gmail.comnpm',
           subject: "New RFQ submission",
           html: `
           <html>
