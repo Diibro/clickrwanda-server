@@ -3,19 +3,13 @@ const {v4: uuidv4} = require('uuid');
 const  dbErrorHandler = require('../middlewares/dbError');
 //const imageUrl = "http://localhost:3000/public/images/sample.png";
 
+const queries = require("../sql/SubCategoryQueries")
 const subCategoryModel = {
      name: "sub category",
-     queries: {
-          selectAll: "select s.sub_id, s.sub_name, c.category_id, c.category_name, c.category_icon from sub_category s inner join category c on s.parent_id = c.category_id; ",
-          categorySearch: "select c.sub_id, c.sub_name, c.parent_id, count(a.ad_name) as sub_ads from sub_category c left join adverts a on a.sub_category_id = c.sub_id  where parent_id = ? group by c.sub_id;",
-          addQuery: "insert into sub_category values (?, ?, ?)",
-          updateQuery: "update sub_category set sub_name = ? where sub_id = ? ;",
-          searchQuery: "select * from sub_category where sub_id = ?;",
-          deleteQuery: "delete from sub_category where sub_id = ? ;" 
-     },
+     
      findAll: async(req, res) => {
           try {
-               db.query(subCategoryModel.queries.selectAll, (err, data) => {
+               db.query(queries.selectAll, (err, data) => {
                     if(err){
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
@@ -35,7 +29,7 @@ const subCategoryModel = {
                     const info = req.body;
                     const sub_id = uuidv4();
                     const values = [sub_id, info.sub_name, info.parent_id];
-                    db.query(subCategoryModel.queries.addQuery, values , (err) => {
+                    db.query(queries.addQuery, values , (err) => {
                          if (err){
                               return  dbErrorHandler(err, res, subCategoryModel.name);
                          }
@@ -51,7 +45,7 @@ const subCategoryModel = {
      findAllInCategory: async(req, res) => {
           const info = req.body;
           try {
-               db.query(subCategoryModel.queries.categorySearch, [info.category_id], (err, data) => {
+               db.query(queries.categorySearch, [info.category_id], (err, data) => {
                     if(err){
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
@@ -68,7 +62,7 @@ const subCategoryModel = {
      search: async (req, res) => {
           try {
                const info = req.body;
-               db.query(subCategoryModel.queries.searchQuery, [info.sub_id], (err, data) => {
+               db.query(queries.searchQuery, [info.sub_id], (err, data) => {
                     if(err){
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
@@ -85,13 +79,13 @@ const subCategoryModel = {
      update: async (req,res)=>{
           try {
                const info = req.body;
-               db.query(subCategoryModel.queries.searchQuery, [info.sub_id], (err, data) => {
+               db.query(queries.searchQuery, [info.sub_id], (err, data) => {
                     if(err){
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
                     if(data[0]){
                          const values = [info.sub_name, info.sub_id];
-                         db.query(subCategoryModel.queries.updateQuery, values , (err) => {
+                         db.query(queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});
                               }
@@ -108,12 +102,12 @@ const subCategoryModel = {
      },
      delete: async(req, res) =>{
           const info = req.body; 
-          db.query(subCategoryModel.queries.searchQuery, [info.sub_id], (err, data) => {
+          db.query(queries.searchQuery, [info.sub_id], (err, data) => {
                if(err){
                     return  dbErrorHandler(err, res, subCategoryModel.name);
                } 
                if(data[0]){
-                    db.query(subCategoryModel.queries.deleteQuery, [info.sub_id], (err) => {
+                    db.query(queries.deleteQuery, [info.sub_id], (err) => {
                          if(err){
                               return  dbErrorHandler(err, res, subCategoryModel.name);
                          }

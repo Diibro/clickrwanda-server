@@ -8,6 +8,9 @@ const { folders } = require('../configs/cloudinary.config');
 const { loginUser } = require('../services/userService');
 const dbErrorHandler = require('../middlewares/dbError');
 const {sendWelcomeMessage, sendPassWordRecovery, sendRecoveryMessage} = require('../configs/mail');
+const ReviewModel = require('./reviews.model');
+
+const queries = require("../sql/UserQueries")
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
@@ -15,7 +18,7 @@ const userModel = {
      name: "users",
      queries: {
           selectAll: "select * from users",
-          createUser: "insert into users (user_id, full_name, username, user_email, user_phone, user_password, profile_image, reg_date, user_location, user_type) values (?, ?, ?, ?, ?,?,?,NOW(),?,?)",
+          createUser: "insert into users (user_id, full_name, username, user_email, user_phone, user_password, profile_image, reg_date, user_location, user_type) values (?, ?, ?, ?, ?,?,?,?,?,?)",
           updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?, website = ?  where user_id = ? ",
           searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type,date_format(reg_date, '%Y-%m-%d') as reg_date, rating from users where user_id = ?",
           deleteQuery: "delete from users where user_id = ? ",
@@ -30,7 +33,7 @@ const userModel = {
      },
      findAll: async(req, res) => {
           try {
-               db.query(userModel.queries.selectAll, (error, data) => {
+               db.query(queries.selectAll, (error, data) => {
                     if(error){
                          return res.json({status: "Error", message: "server error"});
                     }
@@ -62,10 +65,11 @@ const userModel = {
                     if(Object.keys(info).length > 0){
                          bcrypt.hash(info.password.toString(), salt, (err, hash) => {
                               if (err){
+                                   console.log(err);
                                    return res.json({status: "fail", message:"unable to complete account creation"});
                               } 
-                              const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,locationSample,info.userType];
-                              db.query(userModel.queries.createUser, values ,async (err) => {
+                              const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,info.registrationDate,locationSample,info.userType];
+                              db.query(queries.createUser, values ,async (err) => {
                                    if (err){
                                         return dbErrorHandler(err, res, 'user');
                                    }
@@ -80,6 +84,7 @@ const userModel = {
                     
                     
                } catch (error) {
+                    console.log(error);
                     res.json({status: "fail", message: "server error", error});
                }
           
@@ -87,7 +92,7 @@ const userModel = {
      searchUser: async (req, res) => {
           try {
                const info = req;
-               db.query(userModel.queries.searchQuery, [info.userId], (err, data) => {
+               db.query(queries.searchQuery, [info.userId], (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "invalid info"});
                     }
@@ -116,7 +121,7 @@ const userModel = {
                          });
                     });
                }
-               db.query(userModel.queries.searchQuery, [req.userId], async (err, data) => {
+               db.query(queries.searchQuery, [req.userId], async (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err});
                     }
@@ -131,7 +136,7 @@ const userModel = {
                          
                          const locationSample= info.location || JSON.stringify( data[0].user_location );
                          const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].user_email, info.phone || data[0].user_phone, imageUrl,locationSample,info.website || data[0].website,req.userId];
-                         db.query(userModel.queries.updateQuery, values , (err) => {
+                         db.query(queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "fail", message: "failed to update the user. user does not exist", err});
                               }
@@ -148,7 +153,7 @@ const userModel = {
      },
      deleteUser: async(req, res) =>{
           const info = req.body;
-          db.query(userModel.queries.searchQuery, [info.userId], async (err, data) => {
+          db.query(queries.searchQuery, [info.userId], async (err, data) => {
                if(err){
                     return res.json({status: "fail", message: "server error",err})
                }
@@ -156,7 +161,7 @@ const userModel = {
                     if(data[0].profile_image != unknownImage){
                          await deleteImage(data[0].profile);
                     }
-                    db.query(userModel.queries.deleteQuery, [info.userId], (err) => {
+                    db.query(queries.deleteQuery, [info.userId], (err) => {
                          if(err){
                               return res.json({status: "fail", err});
                          }
@@ -171,7 +176,7 @@ const userModel = {
           try {
           const info = req.body;
           const data = await new Promise((resolve, reject) => {
-               db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+               db.query(queries.seachEmail, [info.email], (err, result) => {
                     if (err) {
                     reject(err);
                     } else {
@@ -236,12 +241,12 @@ const userModel = {
           try {
                const info = req.body;
                const newRate  = info.rating;
-               db.query(userModel.queries.searchByid, [info.userId], (err, data) => {
+               db.query(queries.searchByid, [info.userId], (err, data) => {
                     if (err) return dbErrorHandler(err, res, "user");
                     if(data[0]){
                          let oldRate = data[0].rating;
                          let finalRating = oldRate > 0 ?  ((newRate + ((100 - oldRate) / 4)) / 4) + oldRate : newRate;
-                         db.query(userModel.queries.updateUserRating, [finalRating > 100 ? 100 : finalRating < 0 ? 0 : finalRating, info.userId], (error) => {
+                         db.query(queries.updateUserRating, [finalRating > 100 ? 100 : finalRating < 0 ? 0 : finalRating, info.userId], (error) => {
                               if(error) return dbErrorHandler(error, res, "user");
                               return res.json({status: "pass", message: "submitted the rating successfully"});
                          });
@@ -259,7 +264,7 @@ const userModel = {
           try {
                const info = req.body;
                const data = await new Promise((resolve, reject) => {
-                    db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+                    db.query(queries.seachEmail, [info.email], (err, result) => {
                          if (err) {
                          reject(err);
                          } else {
@@ -303,7 +308,7 @@ const userModel = {
           try {
                const info = req.body;
                const data = await new Promise((resolve, reject) => {
-                    db.query(userModel.queries.seachEmail, [info.email], (err, result) => {
+                    db.query(queries.seachEmail, [info.email], (err, result) => {
                          if (err) {
                          reject(err);
                          } else {
@@ -316,7 +321,7 @@ const userModel = {
                     const userId = data[0].user_id;
                     bcrypt.hash(info.newPassword.toString(), salt, (err, hash) => {
                          if(err) return res.json({status: "fail", message: "error changing the password"});
-                         db.query(userModel.queries.changePassword, [hash, userId],async (err) => {
+                         db.query(queries.changePassword, [hash, userId],async (err) => {
                               if(err) return dbErrorHandler(err, res, "user");
                               await sendRecoveryMessage(info.email, info.newPassword);
                               return res.json({status: "pass", message: "Password successfully reset"});
@@ -329,6 +334,60 @@ const userModel = {
                }
           } catch (error) {
                return res.json({status: "fail", message:"server error"});
+          }
+     },
+     getUserDashInfo: async(req,res) => {
+          try {
+               let userId = req.body.userId;
+               let data = {};
+               await Promise.all([
+                    new Promise(resolve => {
+                         db.query(queries.getUserAdsTotal, [userId], (error, data) => {
+                              if(error) data.totalAds = 0;
+                              else {
+                                   data.totalAds = data.total_ads;
+                                   resolve();
+                              }
+                         } )
+                    }),
+                    new Promise(resolve => {
+                         db.query(queries.getUserViews, [userId], (error, data) => {
+                              if(error) data.totalViews = 0;
+                              else {
+                                   data.totalViews = data.total_views;
+                                   resolve();
+                              }
+                         } )
+                    }),
+                    new Promise(async resolve => {
+                         db.query(ReviewModel.queries.findUserReviewsPerType, [userId, "message"], (error, data) => {
+                              if(error) {
+                                   data.totalMessages = null;
+                              }else{
+                                   data.totalMessages = data;
+                                   resolve();
+                              }
+                         }),
+                         db.query(ReviewModel.queries.findUserReviewsPerType, [userId, "comment"], (error, data) => {
+                              if(error) {
+                                   data.totalComments = null;
+                              }else{
+                                   data.totalComments = data;
+                                   resolve();
+                              }
+                         }),
+                         db.query(ReviewModel.queries.findUserReviewsPerType, [userId, "report"], (error, data) => {
+                              if(error) {
+                                   data.totalReports = null;
+                              }else{
+                                   data.totalReports = data;
+                                   resolve();
+                              }
+                         })
+                    })
+               ])
+          } catch (error) {
+               return res.json({status:"fail", message: "Server error",error});
           }
      }
 

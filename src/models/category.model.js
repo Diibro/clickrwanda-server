@@ -4,19 +4,13 @@ const { uploadImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
 const dbErrorHandler = require('../middlewares/dbError');
 
+const queries = require("../sql/CategoryQueries")
+
 const categoryModel = {
      name: "category",
-     queries: {
-          selectAll: `select c.category_id, c.category_name, c.category_icon, count(a.ad_id) as total_adverts from category c left join sub_category s on c.category_id = s.parent_id left join  adverts a on a.sub_category_id = s.sub_id group by c.category_id, c.category_name order by c.category_rank asc;`,
-          createCategory: `insert into category values (?, ?, ?,?)`,
-          updateQuery: "update category set category_name = ?, category_icon = ?, category_rank = ? where category_id = ? ;",
-          searchQuery: "select * from category where category_id = ?;",
-          deleteQuery: "delete from category where category_id = ? ;",
-          deleteSubs: "delete from sub_category where parent_id = ? ;",
-     },
      findAll: async(req, res) => {
           try {
-               db.query(categoryModel.queries.selectAll, (error, data) => {
+               db.query(queries.selectAll, (error, data) => {
                     if(error){
                          console.error(error);
                          return res.status(500).json({status: "Error", message: "server error"});
@@ -45,7 +39,7 @@ const categoryModel = {
                     const info = req.body;
                     const category_id = uuidv4();
                     const values = [category_id,info.category_name, imageUrl, info.category_rank || 0];
-                    db.query(categoryModel.queries.createCategory, values , (err) => {
+                    db.query(queries.createCategory, values , (err) => {
                          if (err){
                               return res.json({status: "failed", message: "failed to add category. Category alread exists"});
                          }
@@ -61,7 +55,8 @@ const categoryModel = {
      searchCategory: async (req, res) => {
           try {
                const info = req.body;
-               db.query(categoryModel.queries.searchQuery, [info.category_id], (err, data) => {
+               console.log(info);
+               db.query(queries.searchQuery, [info.category_id], (err, data) => {
                     if(err){
                          return res.json({status: "search fail", message: "invalid info"});
                     }
@@ -78,7 +73,7 @@ const categoryModel = {
      updateCategory: async (req,res)=>{
           try {
                const info = req.body;
-               db.query(categoryModel.queries.searchQuery, [info.category_id], async (err, data) => {
+               db.query(queries.searchQuery, [info.category_id], async (err, data) => {
                     if(err){
                          return res.json({status: "fail", message: "server error",err})
                     }
@@ -91,7 +86,7 @@ const categoryModel = {
                               }
                          }
                          const values = [info.category_name || data[0].category_name, imageUrl, info.category_rank || data[0].category_rank, info.category_id];
-                         db.query(categoryModel.queries.updateQuery, values , (err) => {
+                         db.query(queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});
                               }
@@ -108,16 +103,16 @@ const categoryModel = {
      },
      deleteCategory: async(req, res) =>{
           const info = req.body;
-          db.query(categoryModel.queries.searchQuery, [info.category_id], (err, data) => {
+          db.query(queries.searchQuery, [info.category_id], (err, data) => {
                if(err){
                     return res.json({status: "fail", message: "server error",err})
                }
                if(data[0]){
-                    db.query(categoryModel.queries.deleteSubs, [info.category_id], (err) =>{
+                    db.query(queries.deleteSubs, [info.category_id], (err) =>{
                          if(err){
                               return res.json({status: "fail", message: "cannot perform the operation", err});
                          }
-                         db.query(categoryModel.queries.deleteQuery, [info.category_id], (err) => {
+                         db.query(queries.deleteQuery, [info.category_id], (err) => {
                               if(err){
                                    return res.json({status: "fail", err});
                               }
