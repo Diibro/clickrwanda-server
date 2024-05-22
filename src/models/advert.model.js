@@ -97,7 +97,7 @@ const advertModel = {
                await Promise.all([
                     info.boostSellers ? 
                     new Promise(resolve => {
-                         db.query(userModel.queries.getBestSellers, (err, data) => {
+                         db.query(userQueries.getBestSellers, (err, data) => {
                               if(err) bestSellers = [];
                               else bestSellers = data[0] ? data : [];
                               bestSellers.forEach(item => sellerIds.add(item.user_id));
@@ -107,7 +107,7 @@ const advertModel = {
                     : null,
                     info.boostSellers ? 
                     new Promise(resolve => {
-                         db.query(userModel.queries.getBestViewedUsers, [info.boostNum],(err, data) =>{
+                         db.query(userQueries.getBestViewedUsers, [info.boostNum],(err, data) =>{
                               const result = bestSellers[0] ? data.filter(item => !sellerIds.has(item.user_id)) : data;
                               bestViewed = result;
                               resolve()
@@ -125,7 +125,7 @@ const advertModel = {
                     info.page ?
                     new Promise(resolve => {
                          const offsetValue = (info.page - 1) * 50;
-                         db.query(queries.findAllPaged,[offsetValue], (err, data) => {
+                         db.query(queries.findAllPaged,[(offsetValue)], (err, data) => {
                               if(err){
                                    adsFetched = [];
                               }
@@ -158,6 +158,7 @@ const advertModel = {
                ]); 
                return res.json({status:"pass", message:"success",data: {generalAds:adsFetched[0] ? adsFetched : "no data found", boostedAds, bestSellers: [...bestSellers, ...bestViewed],discounted, adWebsites}, totalAds});
           }catch(error){
+               console.log(error);
                return res.json({status:"fail", message:"server error", error});
           }
      },
