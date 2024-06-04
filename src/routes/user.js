@@ -4,7 +4,7 @@ const userModel = require('../models/user.model');
 const { logoUpload } = require('../middlewares/upload');
 const authenticateUser = require('../middlewares/auth');
 
-userRouter.get('/1', authenticateUser,async (req,res) => await userModel.findAll(req, res));
+userRouter.get('/1', async (req,res) => await userModel.findAll(req, res));
 userRouter.post('/2',logoUpload,async (req,res) => await userModel.addUser(req, res));
 userRouter.post('/3', authenticateUser, logoUpload,async (req,res) => await userModel.updateUser(req, res));
 userRouter.get('/4', authenticateUser, async (req,res) => await userModel.searchUser(req, res));

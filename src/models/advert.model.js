@@ -12,6 +12,17 @@ const queries = require("../sql/AdvertQueries");
 
 const advertModel = {
      name: "advert",
+     getAll: async () => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectAll, (error, res) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(res);
+                    }
+               })
+          })
+     },
      add: async(req, res) => {
           try {
                const  ad_id = uuidv4();

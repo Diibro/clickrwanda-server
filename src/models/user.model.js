@@ -10,27 +10,13 @@ const dbErrorHandler = require('../middlewares/dbError');
 const {sendWelcomeMessage, sendPassWordRecovery, sendRecoveryMessage} = require('../configs/mail');
 const ReviewModel = require('./reviews.model');
 
-const queries = require("../sql/UserQueries")
+const queries = require("../sql/UserQueries");
+const { comparePassword, hashPassword } = require('../utils/hashFunctions');
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
 const userModel = {
      name: "users",
-     queries: {
-          selectAll: "select * from users",
-          createUser: "insert into users (user_id, full_name, username, user_email, user_phone, user_password, profile_image, reg_date, user_location, user_type) values (?, ?, ?, ?, ?,?,?,?,?,?)",
-          updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?, website = ?  where user_id = ? ",
-          searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type,date_format(reg_date, '%Y-%m-%d') as reg_date, rating from users where user_id = ?",
-          deleteQuery: "delete from users where user_id = ? ",
-          seachEmail: "select * from users where user_email = ?",
-          searchByid: "select * from users where user_id = ? ",
-          updateUserRating: "update users set rating = ? where user_id = ?",
-          getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
-          getBestViewedUsers: "select u.user_id, u.username, u.full_name, u.profile_image, u.user_phone, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join adverts a on u.user_id = a.ad_user_id group by u.user_id having total_ads > 1 order by total_views desc limit ?;",
-          getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?",
-          getBestSellers: "select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id where p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%';",
-          changePassword: "update users set user_password = ? where user_id = ? ;"
-     },
      findAll: async(req, res) => {
           try {
                db.query(queries.selectAll, (error, data) => {
@@ -63,19 +49,14 @@ const userModel = {
                     }
                     
                     if(Object.keys(info).length > 0){
-                         bcrypt.hash(info.password.toString(), salt, (err, hash) => {
+                         const hash = await hashPassword(info.password);
+                         const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,info.registrationDate,locationSample,info.userType];
+                         db.query(queries.createUser, values ,async (err) => {
                               if (err){
-                                   console.log(err);
-                                   return res.json({status: "fail", message:"unable to complete account creation"});
-                              } 
-                              const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,info.registrationDate,locationSample,info.userType];
-                              db.query(queries.createUser, values ,async (err) => {
-                                   if (err){
-                                        return dbErrorHandler(err, res, 'user');
-                                   }
-                                   // const mailCheck = await sendWelcomeMessage(info.email);
-                                   return res.json({status: "pass", message: `Successfully created the account.`});
-                              });
+                                   return dbErrorHandler(err, res, 'user');
+                              }
+                              // const mailCheck = await sendWelcomeMessage(info.email);
+                              return res.json({status: "pass", message: `Successfully created the account.`});
                          });
                     }else{
                          return res.json({status: "fail", message: "invalid email"});
@@ -187,15 +168,7 @@ const userModel = {
      
           if (data[0]) {
           const userInfo = data[0];
-          const match = await new Promise((resolve, reject) => {
-               bcrypt.compare(info.password.toString(), userInfo.user_password, (bcryptErr, result) => {
-               if (bcryptErr) {
-                    reject(bcryptErr);
-               } else {
-                    resolve(result);
-               }
-               });
-          });
+          const match = await comparePassword(info.password.toString(), userInfo.user_password);
      
           if (!match) {
                return res.json({ status: 'fail', message: 'Invalid password' });
@@ -211,15 +184,16 @@ const userModel = {
                email: userInfo.user_email,
                phone: userInfo.user_phone,
                profile_image: userInfo.profile_image,
-               location: userInfo.user_location
+               location: userInfo.user_location,
+               role:userInfo.user_type
           };
           
-          // res.cookie('clickrwanda-server-token', token, {
-          //      httpOnly: true,
-          //      secure: process.env.NODE_ENV === 'production' ? true : false,
-          //      sameSite: 'None',
-          //      expiresIn: 2 * 60 * 60, 
-          // });
+          res.cookie('user-access-token', token, {
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production' ? true : false,
+               sameSite: 'None',
+               expiresIn: 2 * 60 * 60, 
+          });
      
           return res.json({ status: 'pass', message: 'Successfully logged in', data: user, loginToken: token });
           } else {
@@ -231,7 +205,7 @@ const userModel = {
      },
      logout: async(req, res) => {
           try {
-               // req.clearCookie('clickrwanda-server-token');
+               req.clearCookie('user-access-token');
                return res.json({ status: 'success', message: 'Logout successful' });
              } catch (error) {
                return res.json({ status: 'fail', message: 'Server error during logout' });

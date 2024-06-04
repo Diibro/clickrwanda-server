@@ -1,5 +1,5 @@
 module.exports = {
-     selectAll: "select * from users",
+     selectAll: "select * from users where user_type <> 'admin';",
      createUser: "insert into users (user_id, full_name, username, user_email, user_phone, user_password, profile_image, reg_date, user_location, user_type) values (?, ?, ?, ?, ?,?,?,?,?,?)",
      updateQuery: "update users set full_name = ?, username = ?, user_email = ?, user_phone = ?, profile_image = ?, user_location = ?, website = ?  where user_id = ? ",
      searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type,date_format(reg_date, '%Y-%m-%d') as reg_date, rating from users where user_id = ?",

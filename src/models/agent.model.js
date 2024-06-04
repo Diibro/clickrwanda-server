@@ -1,62 +1,107 @@
+const { resolve } = require('path');
 const {dbConnection: db}= require('../configs/database.config');
+const { countAll } = require('../sql/AdvertQueries');
 const queries = require("../sql/AgentQueries");
 
 module.exports = {
-     createAgent: (agent, cb)=>{
-          const {agent_id, email, password, registrationDate} = agent;
-          db.query(queries.insertOne, [agent_id, email, password, registrationDate], (error, result) => {
-               if(error){
-                    cb(error)
-               }else{
-                    cb(null, result)
-               }
-          } )
+     createAgent: async (agent)=>{
+          return new Promise((resolve, reject)=> {
+               const {agent_id, a_name, a_email,a_phone, a_password, registrationDate, location,active} = agent;
+               db.query(queries.insertOne, [agent_id,a_name, a_email,a_phone, a_password,location, registrationDate,active], (error, result) => {
+                    if(error){
+                         reject(error)
+                    }else{
+                         resolve(agent);
+                    }
+               } )
+          })
+
+
+          
      },
-     findAll: (cb) => {
-          db.query(queries.selectAll, (error, result) => {
-               if(error){
-                    cb(error);
-               }else{
-                    cb(null, result);
-               }
+     findAll: async() => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectAll, (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result);
+                    }
+               })
+          })
+          
+     },
+     countAll: async() => {
+          return new Promise((resolve, reject ) => {
+               db.query(queries.countAll, (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else {
+                         resolve(result[0].agents);
+                    }
+               })
+          })
+          
+     },
+     findByEmail: async(email) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectByEmail, [email], (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result[0]);
+                    }
+               })
           })
      },
-     findByEmail: (email, cb) => {
-          db.query(queries.selectByEmail, [email], (error, result) => {
-               if(error){
-                    cb(error);
-               }else{
-                    cb(null, result);
-               }
+     findById: async(id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectById, [id], (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else {
+                         resolve(result[0]);
+                    }
+               })
           })
+          
      },
-     findById: (id, cb) => {
-          db.query(queries.selectById, [id], (error, result) => {
-               if(error){
-                    cb(error);
-               }else {
-                    cb(null, result);
-               }
+     findReferrals: async(r_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectAllReferals, [r_id], (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result)
+                    }
+               });
           })
+          
      },
-     update: (agent, cb) => {
-          const {email, password, agent_id} = agent;
-          db.query(queries.updateById, [email, password, agent_id], (error, result) => {
-               if(error){
-                    cb(error);
-               }else{
-                    cb(null, result);
-               }
+     update: async(agent) => {
+          return new Promise((resolve,reject) => {
+               const {agent_id, a_name, a_email,a_phone, a_password, active, location}  = agent;
+               db.query(queries.updateById, [a_name, a_email,a_phone, a_password,location, active, agent_id], (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(null, result);
+                    }
+               })
           })
+          
      },
-     delete: (agent, cb) => {
-          const {email, password, agent_id} = agent;
-          db.query(queries.deleteById, [email, password, agent_id], (error, result) => {
-               if(error){
-                    cb(error);
-               }else{
-                    cb(null, result);
-               }
+     delete: async(agent) => {
+          return new Promise((resolve, reject) => {
+               const {agent_id} = agent;
+               db.query(queries.deleteById, [agent_id], (error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result);
+                    }
+               })
           })
+          
      }
 }
