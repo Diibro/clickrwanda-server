@@ -1,4 +1,4 @@
-const advertService = require("../services/AdvertService");
+const advertService = require("../services/advertService");
 
 module.exports = {
      findAll: async(req,res) => {
