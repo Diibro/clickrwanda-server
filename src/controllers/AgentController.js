@@ -1,4 +1,4 @@
-const agentService = require("../services/AgentService");
+const agentService = require("../services/agent");
 
 module.exports = {
      register: async (req, res) => {
