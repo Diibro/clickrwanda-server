@@ -160,7 +160,7 @@ module.exports = {
      search: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.contact, a.ad_views, a.ad_date, a.status, c.sub_id, c.sub_name, p.plan_name, u.user_id, u.full_name, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, date_format(u.reg_date, '%Y-%m-%d') as reg_date, category.category_id, category.category_name from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id where ad_id = ?;",
      searchAd: "select * from adverts where ad_id = ?",
      update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, contact = ?, ad_price = ?, ad_discount = ?  where ad_id = ? and ad_user_id = ?;",
-     delete: "delete from adverts where ad_id = ? and ad_user_id = ?;",
+     delete: "delete from adverts where ad_id = ?;",
      addAdView: "update adverts set ad_views = ? where ad_id = ?;",
      addAdDiscount: "update adverts set ad_discount = ? where ad_id = ?;"
 

@@ -188,7 +188,7 @@ const advertModel = {
                          let imageDeleted = await  deleteImage(mainImage);
                          let imagesDeleted = await deleteImages(other_images);
                          if(imageDeleted.status && imagesDeleted.status){
-                              db.query(queries.delete, [info.ad_id, req.userId], (err) => {
+                              db.query(queries.delete, [info.ad_id], (err) => {
                                    if(err){
                                         return res.json({status:"fail", message: "unable to delete the advert", err});
                                    }
