@@ -1,11 +1,9 @@
 const {dbConnection: db} = require('../configs/database.config');
-const {v4: uuidv4} = require('uuid');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const salt ="$2a$12$abcdefghijklmnopqrstuu";
-const { uploadImage, deleteImage } = require('../utils/cloudinary-functions');
+const { deleteImage } = require('../utils/cloudinary-functions');
 const { folders } = require('../configs/cloudinary.config');
-const { loginUser } = require('../services/userService');
 const dbErrorHandler = require('../middlewares/dbError');
 const {sendWelcomeMessage, sendPassWordRecovery, sendRecoveryMessage} = require('../configs/mail');
 const ReviewModel = require('./reviews.model');
@@ -15,122 +13,67 @@ const { comparePassword, hashPassword } = require('../utils/hashFunctions');
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
-const userModel = {
-     name: "users",
-     findAll: async(req, res) => {
-          try {
+module.exports  = {
+     selectAll: async () => {
+          return new Promise((resolve, reject) => {
                db.query(queries.selectAll, (error, data) => {
                     if(error){
-                         return res.json({status: "Error", message: "server error"});
+                         reject(error);
                     }
-                    if(data[0]){
-                         return res.json({status: "pass", message: "success", data});
-                    }else{
-                         return res.json({statu: "pass", message: "no data found"});
+                    else{
+                         resolve(data);
                     }
-
+     
                } )
-          } catch (error) {
-               return error;
-          }
+          });
      },
-     addUser: async (req, res) => {
-               
-               try {
-                    const info = req.body;
-                    const user_id = uuidv4();
-                    const locationSample= JSON.stringify({location: info.location});
-                    let imageUploaded, imageUrl = unknownImage;
-                    if(req.file){
-                         imageUploaded = await uploadImage(req.file.path, folders.logos);
-                         if(imageUploaded.status){
-                              imageUrl = imageUploaded.image;
+     register: async (info) => {
+               return new Promise((resolve) => {
+                    const values = [info.user_id, info.email,info.name, info.username, info.phone, info.password, info.user_image,info.registrationDate,info.location,info.userType, info.r_id];
+                    db.query(queries.createUser, values ,async (err) => {
+                         if (err){
+                              resolve({status:"fail",message:"database error",error:err});
+                         }else{
+                              resolve({status: "pass", message: "account created", error: null});
                          }
-                    }
-                    
-                    if(Object.keys(info).length > 0){
-                         const hash = await hashPassword(info.password);
-                         const values = [user_id, info.name, info.username, info.email, info.phone, hash, imageUrl,info.registrationDate,locationSample,info.userType];
-                         db.query(queries.createUser, values ,async (err) => {
-                              if (err){
-                                   return dbErrorHandler(err, res, 'user');
-                              }
-                              // const mailCheck = await sendWelcomeMessage(info.email);
-                              return res.json({status: "pass", message: `Successfully created the account.`});
-                         });
-                    }else{
-                         return res.json({status: "fail", message: "invalid email"});
-                    }
-                    
-                    
-                    
-               } catch (error) {
-                    console.log(error);
-                    res.json({status: "fail", message: "server error", error});
-               }
+                    });
+               });
           
      },
-     searchUser: async (req, res) => {
-          try {
-               const info = req;
-               db.query(queries.searchQuery, [info.userId], (err, data) => {
+     searchId: async (user_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.searchQuery, [user_id], (err, data) => {
                     if(err){
-                         return res.json({status: "fail", message: "invalid info"});
+                         reject(err);
                     }
-                    if(data[0]){
-                         return res.json({status: "pass", data: data[0]});
-                    }else{
-                         return res.json({status: "fail", message: "user does not exist"});
+                    else{
+                         resolve(data[0]);
                     }
                });
-          } catch (error) {
-               return res.json({status: "fail", message: "server error"});
-          }
+          });
      },
-     updateUser: async (req,res)=>{
-          try {
-               const info = req.body;
-               let newPassword = null;
-               if(info.password){
-                    newPassword = new Promise((resolve, reject) => {
-                         bcrypt.hash(info.password.toString(), salt, (err,result) => {
-                              if(err){
-                                   reject(false);
-                                   return res.json({status: "fail", message: "server error",err});
-                              }
-                              resolve(result);
-                         });
-                    });
-               }
-               db.query(queries.searchQuery, [req.userId], async (err, data) => {
-                    if(err){
-                         return res.json({status: "fail", message: "server error",err});
-                    }
-                    if(data[0]){
-                         let imageUploaded, imageUrl = data[0].profile_image;
-                         if(req.file){
-                              imageUploaded = await uploadImage(req.file.path, folders.logos);
-                              if(imageUploaded.status){
-                                   imageUrl = imageUploaded.image;
-                              }
-                         }
-                         
-                         const locationSample= info.location || JSON.stringify( data[0].user_location );
-                         const values = [info.name || data[0].full_name, info.username || data[0].username, info.email || data[0].user_email, info.phone || data[0].user_phone, imageUrl,locationSample,info.website || data[0].website,req.userId];
-                         db.query(queries.updateQuery, values , (err) => {
-                              if (err){
-                                   return res.json({status: "fail", message: "failed to update the user. user does not exist", err});
-                              }
-                              return res.json({status: "pass", message: "Successfully updated the info"});
-                         });
+     searchByEmail: async (email) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.searchEmail, [email], (error, data) => {
+                    if(error) {
+                         reject(error);
                     }else{
-                         return res.json({status: "fail", message: "user does not exist"});
+                         resolve(data[0]);
                     }
                });
-               
-          } catch (error) {
-               return res.json({status: "fail", error});
-          }
+          });
+     },
+     updateUser: async (user)=>{
+          return new Promise((resolve, reject) => {
+               const info = user;
+               const values = [info.name, info.username, info.phone, user.profile_image,info.location,info.website, info.ad_plan_id, info.active,info.user_id];
+               db.query(queries.updateQuery, values , (err) => {
+                    if (err){
+                         reject({status: "fail", message:"database error", error: err});
+                    }
+                    resolve({status: "pass", message: "Successfully updated the info"});
+               });
+          })
      },
      deleteUser: async(req, res) =>{
           const info = req.body;
@@ -153,64 +96,7 @@ const userModel = {
                }
           });
      },
-     login: async (req, res) => {
-          try {
-          const info = req.body;
-          const data = await new Promise((resolve, reject) => {
-               db.query(queries.seachEmail, [info.email], (err, result) => {
-                    if (err) {
-                    reject(err);
-                    } else {
-                    resolve(result);
-                    }
-               });
-          });
      
-          if (data[0]) {
-          const userInfo = data[0];
-          const match = await comparePassword(info.password.toString(), userInfo.user_password);
-     
-          if (!match) {
-               return res.json({ status: 'fail', message: 'Invalid password' });
-          }
-          const userId = userInfo.user_id;
-          const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-          
-     
-          const user = {
-               id: userInfo.user_id,
-               name: userInfo.full_name,
-               username: userInfo.username,
-               email: userInfo.user_email,
-               phone: userInfo.user_phone,
-               profile_image: userInfo.profile_image,
-               location: userInfo.user_location,
-               role:userInfo.user_type
-          };
-          
-          res.cookie('user-access-token', token, {
-               httpOnly: true,
-               secure: process.env.NODE_ENV === 'production' ? true : false,
-               sameSite: 'None',
-               expiresIn: 2 * 60 * 60, 
-          });
-     
-          return res.json({ status: 'pass', message: 'Successfully logged in', data: user, loginToken: token });
-          } else {
-          return res.json({ status: 'fail', message: 'User not found' });
-          }
-          } catch (error) {
-          return res.json({ status: 'fail', message: 'Server error' });
-          }
-     },
-     logout: async(req, res) => {
-          try {
-               req.clearCookie('user-access-token');
-               return res.json({ status: 'success', message: 'Logout successful' });
-             } catch (error) {
-               return res.json({ status: 'fail', message: 'Server error during logout' });
-             }
-     },
      rateUser: async (req, res) => {
           try {
                const info = req.body;
@@ -238,7 +124,7 @@ const userModel = {
           try {
                const info = req.body;
                const data = await new Promise((resolve, reject) => {
-                    db.query(queries.seachEmail, [info.email], (err, result) => {
+                    db.query(queries.searchEmail, [info.email], (err, result) => {
                          if (err) {
                          reject(err);
                          } else {
@@ -282,7 +168,7 @@ const userModel = {
           try {
                const info = req.body;
                const data = await new Promise((resolve, reject) => {
-                    db.query(queries.seachEmail, [info.email], (err, result) => {
+                    db.query(queries.searchEmail, [info.email], (err, result) => {
                          if (err) {
                          reject(err);
                          } else {
@@ -367,4 +253,4 @@ const userModel = {
 
 }
 
-module.exports = userModel;
+

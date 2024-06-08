@@ -8,12 +8,12 @@ module.exports = {
                if(webView === null || webView === undefined){
                     resolve(new Error("Invalid or null object"));
                }else{
-                    const {v_date, v_ip_address, v_type, v_id} = webView;
-                    db.query(queries.add, [v_date, v_ip_address, v_type, v_id], (error, results) => {
+                    const {v_date, v_ip_address, v_type, v_id, r_id} = webView;
+                    db.query(queries.add, [v_date, v_ip_address, v_type, v_id, r_id], (error, result) => {
                          if(error){
                               resolve(error);
                          }else{
-                              resolve(results);
+                              resolve(result);
                          }
                     });
                }
@@ -21,25 +21,25 @@ module.exports = {
      },
      findAll: async() => {
           return new Promise((resolve, reject) => {
-               db.query(queries.findAll, (error, results) => {
+               db.query(queries.findAll, (error, result) => {
                     if(error){
                          reject(error);
                     }else{
-                         resolve(results);
+                         resolve(result);
                     }
                })
           })
      },
-     findByUser: async(userId) => {
+     findByVId: async(userId) => {
           return new Promise((resolve, reject) => {
                if(userId === null || userId === undefined) {
                     reject(new Error("Invalid or null object"));
                }else{
-                    db.query(queries.findUserVisits, [userId], (error, results) => {
+                    db.query(queries.findUserVisits, [userId], (error, result) => {
                          if(error){
                               reject(error);
                          }else{
-                              resolve(results)
+                              resolve(result)
                          }
                     })
                }
@@ -51,9 +51,20 @@ module.exports = {
                     if(error){
                          reject(error);
                     }else{
-                         resolve(results);
+                         resolve(result);
                     }
                })
           } )
+     },
+     findByRef: async(r_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectByRef, [r_id],(error, result) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result);
+                    }
+               })
+          })
      } 
 }

@@ -9,6 +9,7 @@ const paymentPlanRouter = require('./payment_plan');
 const ReviewRouter = require('./review');
 const quotationRouter = require('./quotation');
 const agentRouter = require("./agent");
+const viewRouter = require('./webView');
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
@@ -18,6 +19,7 @@ mainRouter.use('/payment-plan', paymentPlanRouter);
 mainRouter.use('/review', ReviewRouter);
 mainRouter.use('/quotation', quotationRouter);
 mainRouter.use("/agent", agentRouter);
+mainRouter.use("/web-view", viewRouter);
 mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });

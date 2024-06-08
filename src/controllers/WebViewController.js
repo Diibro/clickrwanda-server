@@ -1,51 +1,53 @@
 const WebViewModel = require("../models/WebView.model");
+const webViewService = require("../services/webView");
 
 module.exports = {
-     addView: (req, res) => {
+     addView: async(req, res) => {
           try {
-               const data = req.body;
-               if(data != null) {
-                    WebViewModel.add(data, (error, result) => {
-                         if(error){
-                              console.log(error);
-                              return res.json({status: "fail", message:"failed to add the view. Database error"})
-                         }else{
-                              return res.json({status:"pass", message:"added view successfully"});
-                         }
-                    })
-               }
+               const info = req.body;
+               info.v_ip_address = req.ip;
+               const result  = await webViewService.save(info);
+               return res.json(result);
           } catch (error) {
                console.log(error);
                return res.json({status: "fail", message:"server error"});
           }
      },
-     findAllVisits: (req,res) => {
+     findAllVisits: async(req,res) => {
           try{
-               WebViewModel.findAll((error,result) => {
-                    if(error){
-                         console.log(error);
-                         return res.json({status:"fail", message: "database error", webViews: []});
-                    }else{
-                         return res.json({status:"pass", message: "fetch successful", webViews: result});
-                    }
-               })
+               const result = await webViewService.findAll();
+               return res.json(result);
           }catch(err){
                console.log(err);
                return res.json({status:"fail", message: "server error"});
           }
      },
-     findUserVisits: (req,res) => {
+     findVisitsPerId: async(req,res) => {
           try{
-               const {userId} = req.body;
-               WebViewModel.findAll(userId,(error,result) => {
-                    if(error){
-                         console.log(error);
-                         return res.json({status:"fail", message: "database error", webViews: []});
-                    }else{
-                         return res.json({status:"pass", message: "fetch successful", webViews: result});
-                    }
-               })
+               const {id} = req.body;
+               const result = await webViewService.findByVId(id);
+               return res.json(result);
           }catch(err){
+               console.log(err);
+               return res.json({status:"fail", message: "server error"});
+          }
+     },
+     findVisitByType: async (req, res) => {
+          try {
+               const {v_type} = req.body;
+               const result =  await webViewService.findByType(v_type);
+               return res.json(result);
+          } catch (error) {
+               console.log(err);
+               return res.json({status:"fail", message: "server error"});
+          }
+     },
+     findVisitsByRef: async(req, res) => {
+          try {
+               const {r_id} = req.body;
+               const result = await webViewService.findByRef(r_id);
+               return res.json(result);
+          } catch (error) {
                console.log(err);
                return res.json({status:"fail", message: "server error"});
           }
