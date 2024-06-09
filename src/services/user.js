@@ -41,11 +41,12 @@ const userService = {
                user.user_id = user_id;
                const hash = await hashPassword(user.password);
                user.password = hash;
+               console.log(user);
                const res = await UserModel.register(user);
                return res;
           } catch (error) {
                console.log(error);
-               return {status:"fail", message: "error adding the use"}
+               return {status:"fail", message: "error adding the user"}
           }
      },
      searchUser: async(user) => {
