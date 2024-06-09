@@ -29,6 +29,29 @@ module.exports  = {
      },
      register: async (info) => {
                return new Promise((resolve) => {
+                    if(info.r_id){
+                         const values = [info.user_id, info.email,info.name, info.username, info.phone, info.password, info.user_image,info.registrationDate,info.location,info.userType, info.r_id || null];
+                         db.query(queries.createUserRef, values ,async (err) => {
+                              if (err){
+                                   resolve({status:"fail",message:"database error",error:err});
+                              }else{
+                                   resolve({status: "pass", message: "account created", error: null});
+                              }
+                         });
+                    }else{
+                         const values = [info.user_id, info.email,info.name, info.username, info.phone, info.password, info.user_image,info.registrationDate,info.location,info.userType
+
+
+
+                         ];
+                         db.query(queries.createUser, values ,async (err) => {
+                              if (err){
+                                   resolve({status:"fail",message:"database error",error:err});
+                              }else{
+                                   resolve({status: "pass", message: "account created", error: null});
+                              }
+                         });
+                    }
                     const values = [info.user_id, info.email,info.name, info.username, info.phone, info.password, info.user_image,info.registrationDate,info.location,info.userType, info.r_id || null];
                     db.query(queries.createUser, values ,async (err) => {
                          if (err){
