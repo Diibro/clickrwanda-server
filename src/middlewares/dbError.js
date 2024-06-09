@@ -4,6 +4,7 @@ const dbErrorHandler = (error, res, name) => {
      }else if(error.code === 'ER_BAD_NULL_ERROR'){
           return res.json({status: "fail", message: `null values detected for not null columns in the database`});
      }
+     console.log(error);
      return res.json({status:"fail",message: "Database error",error});
 }
 
