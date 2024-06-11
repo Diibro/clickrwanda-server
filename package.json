@@ -29,6 +29,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "flatted": "^3.3.1",
     "fs": "^0.0.1-security",
     "ip2location-io-nodejs": "^1.0.4",
     "jsonwebtoken": "^9.0.2",

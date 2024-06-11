@@ -94,6 +94,25 @@ const advertModel = {
                return res.json({status:"fail", message:"server error", error});
           }
      },
+     updateAd: async(ad) => {
+          return new Promise((resolve,reject) => {
+               const values = [
+                    ad.ad_name, ad.description, 
+                    ad.ad_image,
+                    ad.ad_type, ad.ad_price, 
+                    ad.sub_category_id, ad.status, 
+                    ad.ad_discount, ad.contact, 
+                    ad.ad_plan_id, ad.ad_website, ad.ad_id 
+               ];
+               db.query(queries.updateAd, values, (error, result)  => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result);
+                    }
+               })
+          })
+     },
      findAll: async(req, res) => {
           try{
                const info  = req.body;
@@ -350,7 +369,7 @@ const advertModel = {
                     }),
                     new Promise((resolve, reject) => {
                          db.query(userQueries.searchQuery, [info.userId], (err, result) => {
-                              if(err) reject(dbErrorHandler(err, res, "user"));
+                              if(err) return(dbErrorHandler(err, res, "user"));
                               userData.vendorInfo = result[0];
                               resolve();
                          })

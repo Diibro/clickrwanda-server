@@ -9,6 +9,7 @@ advertRouter.get('/all-adverts', async (req,res) => AdvertController.findAll(req
 advertRouter.post('/1',  async (req, res) => await advertModel.findAll(req, res));
 advertRouter.post('/2',authenticateUser, advertMultiUpload , async (req, res) => await advertModel.add(req, res));
 advertRouter.post('/3',authenticateUser, advertMultiUpload, async(req, res) => await advertModel.update(req, res));
+advertRouter.post('/update-ad', authenticateUser, advertMultiUpload, async(req,res) => await AdvertController.update(req,res));
 advertRouter.post('/4', async (req, res) => await advertModel.search(req, res));
 advertRouter.post('/5',authenticateUser, async (req, res) => await advertModel.delete(req, res));
 
