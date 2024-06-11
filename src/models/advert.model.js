@@ -101,7 +101,7 @@ const advertModel = {
                     ad.ad_image,
                     ad.ad_type, ad.ad_price, 
                     ad.sub_category_id, ad.status, 
-                    ad.ad_discount, ad.contact, 
+                    ad.ad_discount || 0, ad.contact, 
                     ad.ad_plan_id, ad.ad_website, ad.ad_id 
                ];
                db.query(queries.updateAd, values, (error, result)  => {
