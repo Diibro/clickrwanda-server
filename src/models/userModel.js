@@ -64,14 +64,17 @@ module.exports  = {
           });
      },
      updateUser: async (user)=>{
+          console.log(user);
           return new Promise((resolve, reject) => {
                const info = user;
-               const values = [info.name, info.username, info.phone, user.profile_image,info.location,info.website, info.ad_plan_id, info.active,info.user_id];
+               const values = [
+                    info.name || info.full_name, info.username, info.phone || info.user_phone, user.profile_image,info.location || info.user_location,info.website, info.ad_plan_id, info.active,info.user_id
+               ];
                db.query(queries.updateQuery, values , (err) => {
                     if (err){
                          reject({status: "fail", message:"database error", error: err});
                     }
-                    resolve({status: "pass", message: "Successfully updated the info"});
+                    resolve({status: "pass", message: "Successfully updated the user", data: user});
                });
           })
      },
