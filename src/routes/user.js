@@ -10,6 +10,7 @@ userRouter.post('/2',logoUpload,async (req,res) => await userController.register
 userRouter.post('/3', authenticateUser, logoUpload,async (req,res) => await userController.updateUser(req, res));
 userRouter.get('/4', authenticateUser, async (req,res) => await userController.searchUser(req, res));
 userRouter.delete('/5', authenticateUser, async (req,res) => await userModel.deleteUser(req, res));
+userRouter.post('/get-ref', authenticateUser, async(req,res) => await userController.findByRef(req,res));
 
 //user authentication routes
 

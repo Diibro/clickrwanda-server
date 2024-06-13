@@ -6,5 +6,4 @@ module.exports = {
      selectByEmail: "select * from agents where a_email = ?",
      updateById: "update agents set a_name = ?,a_email = ?, a_phone = ?,a_password = ?, location = ?, active = ? where agent_id = ?",
      deleteById: "delete from agents where agent_id = ?",
-     selectAllReferals: "select * from users where r_id = ?"
 }

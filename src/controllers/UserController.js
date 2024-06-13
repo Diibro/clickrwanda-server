@@ -82,5 +82,10 @@ module.exports = {
           } catch (error) {
                return res.json({ status: 'fail', message: 'Server error during logout' });
           }
+     },
+     findByRef: async(req,res) => {
+          const info = req.body;
+          const result = await userService.findByRef(info.r_id);
+          return res.json(result);
      } 
 }

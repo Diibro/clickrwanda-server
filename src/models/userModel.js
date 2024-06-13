@@ -252,6 +252,17 @@ module.exports  = {
           } catch (error) {
                return res.json({status:"fail", message: "Server error",error});
           }
+     },
+     findByRef: async (r_id) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectByR_Id, [r_id], (error, data) => {
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(data);
+                    }
+               })
+          })
      }
 
 }

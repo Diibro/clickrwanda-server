@@ -113,6 +113,15 @@ const userService = {
                console.log(error);
                return {status:"fail", message: "system error"}
           }
+     },
+     findByRef: async(r_id) => {
+          try {
+               const res = await UserModel.findByRef(r_id);
+               return {status: "success", message: "successfully fetched users referred", data: res}
+          } catch (error) {
+               console.log(error);
+               return {status:'fail', message: "error fetching users Refered"}
+          }
      }
 
 }

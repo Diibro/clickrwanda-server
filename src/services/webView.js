@@ -26,7 +26,8 @@ module.exports = {
      },
      findByType: async (v_type) => {
           try {
-               const res = await webViewModel.findByType(v_type)
+               const res = await webViewModel.findByType(v_type);
+               return {status: "success", data: res};
           } catch (error) {
                return {status: "fail", data: null, error};
           }
@@ -34,6 +35,7 @@ module.exports = {
      findByRef: async (r_id) => {
           try {
                const res = await webViewModel.findByRef(r_id);
+               return {status:"success", data: res};
           } catch (error) {
                return {status: "fail", data: null, error}
           }
