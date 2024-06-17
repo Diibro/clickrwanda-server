@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 module.exports = {
      addAgent: async (agent) => {
           try {
+               console.log(agent);
                if(agent != null){
                     let agent_id = "agent_";
                     const count = await agentModel.countAll();
