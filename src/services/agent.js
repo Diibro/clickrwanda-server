@@ -29,13 +29,17 @@ module.exports = {
                if(agent != null) {
                     const exisitingAgent = await agentModel.findByEmail(agent.a_email);
                     if(exisitingAgent != null && exisitingAgent){
-                         const match = await comparePassword(agent.a_password, exisitingAgent.a_password);
-                         if(match){
-                              const {a_email} = exisitingAgent;
-                              const token = jwt.sign({a_email}, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-                              return {status:"success", message:"login successful", data: exisitingAgent, agentToken: token };
+                         if(exisitingAgent.active){
+                              const match = await comparePassword(agent.a_password, exisitingAgent.a_password);
+                              if(match){
+                                   const {a_email} = exisitingAgent;
+                                   const token = jwt.sign({a_email}, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+                                   return {status:"success", message:"login successful", data: exisitingAgent, agentToken: token };
+                              }else{
+                                   return {status: "fail", message:"invalid password", data: null};
+                              }
                          }else{
-                              return {status: "fail", message:"invalid password", data: null};
+                              return {status: "fail", message: "You account is inactive. Contact technical Support"}
                          }
                     }else{
                          return {status:"fail", message:"agent does not exist", data: null};

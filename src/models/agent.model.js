@@ -7,7 +7,7 @@ module.exports = {
      createAgent: async (agent)=>{
           return new Promise((resolve, reject)=> {
                const {agent_id, a_name, a_email,a_phone, a_password, registrationDate, location,active, social_links,verified} = agent;
-               db.query(queries.insertOne, [agent_id,a_name, a_email,a_phone, a_password,location, registrationDate,active], (error, result) => {
+               db.query(queries.insertOne, [agent_id,a_name, a_email,a_phone, a_password,location, registrationDate,active, verified, social_links], (error, result) => {
                     if(error){
                          reject(error)
                     }else{
@@ -80,8 +80,8 @@ module.exports = {
      },
      update: async(agent) => {
           return new Promise((resolve,reject) => {
-               const {agent_id, a_name, a_email,a_phone, a_password, active, location}  = agent;
-               db.query(queries.updateById, [a_name, a_email,a_phone, a_password,location, active, agent_id], (error, result) => {
+               const {agent_id, a_name, a_email,a_phone, a_password, active, location, verified, social_links}  = agent;
+               db.query(queries.updateById, [a_name, a_email,a_phone, a_password,location, active,verified, JSON.stringify(social_links) ,agent_id], (error, result) => {
                     if(error){
                          reject(error);
                     }else{
