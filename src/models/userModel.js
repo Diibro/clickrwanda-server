@@ -10,6 +10,7 @@ const ReviewModel = require('./reviews.model');
 
 const queries = require("../sql/UserQueries");
 const { comparePassword, hashPassword } = require('../utils/hashFunctions');
+const { stringfyObject } = require('../utils/jsonFunctions');
 
 const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
 
@@ -67,7 +68,7 @@ module.exports  = {
           return new Promise((resolve, reject) => {
                const info = user;
                const values = [
-                    info.name || info.full_name, info.username, info.phone || info.user_phone, user.profile_image,info.location || info.user_location,info.website, info.ad_plan_id, info.active, info.verified,info.user_id
+                    info.name || info.full_name, info.username, info.phone || info.user_phone, user.profile_image,stringfyObject(info.location || info.user_location),info.website, info.ad_plan_id, info.active, info.verified,info.user_id
                ];
                db.query(queries.updateQuery, values , (err) => {
                     if (err){
