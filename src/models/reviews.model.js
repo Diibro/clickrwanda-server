@@ -1,6 +1,5 @@
 const {dbConnection: db} = require('../configs/database.config');
 const {v4: uuidv4} = require('uuid');
-const dbErrorHandler = require('../middlewares/dbError');
 
 const queries = require("../sql/ReviewQueries");
 
@@ -14,70 +13,66 @@ const ReviewModel =  {
           deleteReview: 'delete from reviews where id = ?',
           findUserReviewsPerType: "select * from reviews where user-id = ? and type = ?;"
      },
-     addReviewAd: async (req, res) => {
-          try {
-               const info = req.body;
+     addReviewAd: async (review) => {
+          return new Promise((resolve) => {
+               const info = review;
                const id = uuidv4();
                const values = [id, info.message, info.user_id, info.ad_id, info.name, info.review_type];
-
-               db.query(queries.addAdReview, values, (error) => {
-                    if (error) return dbErrorHandler(error, res, 'review');
-                    return res.json({status: 'pass', message: "submitted the review successfully"});
+               db.query(queries.addAdReview, values, (error,result) => {
+                    if (error) resolve ({error});
+                    else resolve({data:result});
                })
-
-          } catch (error) {
-               return res.json({status: "fail", message:"server error"});
-          }
+          })
      },
-     addReviewUser: async (req, res) => {
-          try {
-               const info = req.body;
+     addReviewUser: async (review) => {
+          return new Promise(resolve => {
+               const info = review;
                const id = uuidv4();
                const values = [id, info.message, info.user_id, info.name, info.review_type];
 
-               db.query(queries.addUserReview, values, (error) => {
-                    if (error) return dbErrorHandler(error, res, 'review');
-                    return res.json({status: 'pass', message: "submitted the review successfully"});
+               db.query(queries.addUserReview, values, (error,result) => {
+                    if (error)  resolve({error});
+                    else resolve ({error: null, data:result});
                })
-
-          } catch (error) {
-               return res.json({status: "fail", message:"server error"});
-          }
+          })
      },
-     getAdReviews: async (req, res) => {
-          try {
-               const info = req.body;
-               const values = [info.ad_id];
+     getAdReviews: async (ad_id) => {
+          return new Promise(resolve => {
+               const values = [ad_id];
                db.query(queries.findAdReviews, values, (error, result) => {
-                    if(error) return dbErrorHandler(error, res, 'review');
-                    return res.json({status: 'pass', message: "success", data: result[0] ? result : 'no data found'})
+                    if(error) resolve({error, data: null});
+                    else resolve({error:null, data: result});
                });
-          } catch (error) {
-               return res.json({status: "fail", message:"server error"});
-          }
+          })
      },
-     getUserReviews: async (req, res) => {
-          try {
-               const info = req.body;
-               const values = [info.user_id];
+     getUserReviews: async (user_id) => {
+          return new Promise(resolve => {
+               const values = [user_id];
                db.query(queries.findUserReviews, values, (error, result) => {
-                    if(error) return dbErrorHandler(error, res, 'review');
-                    return res.json({status: 'pass', message: "success", data: result[0] ? result : 'no data found'})
+                    if(error) resolve({error, data: null});
+                    else resolve({error:null, data:result})
                });
-          } catch (error) {
-               return res.json({status: "fail", message:"server error"});
-          }
+          })
      },
-     deleteReview: async(req, res) => {
-          try {
-               const info = req.body;
-               db.query(queries.deleteReview, [info.id], (error) => {
-                    if(error) return dbErrorHandler(error, res, 'review');
-                    return res.json({status: 'pass', message: "deleted the review successfully"});
+     deleteReview: async(id) => {
+          return new Promise(resolve => {
+               db.query(queries.deleteReview, [id], (error,result) => {
+                    if(error) resolve({error, data: null});
+                    else resolve({error:null, data: result});
                })
-          } catch (error) {
-               return res.json({status: "fail", message:"server error"});
-          }
+          })
+          
+     },
+     findAll: async () => {
+          return new Promise((reject, resolve) =>{
+               db.query(queries.selectAll, (error, result) =>{
+                    if(error){
+                         reject(error);
+                    }else{
+                         resolve(result);
+                    }
+               } )
+          } )
      }
 }
 

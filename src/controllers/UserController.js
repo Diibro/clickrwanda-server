@@ -87,5 +87,10 @@ module.exports = {
           const info = req.body;
           const result = await userService.findByRef(info.r_id);
           return res.json(result);
-     } 
+     },
+     getUserDashInfo: async(req,res) => {
+          const {user_id} = req.body;
+          const result = await userService.getUserDashInfo(user_id);
+          return res.json(result);
+     }
 }

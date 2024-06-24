@@ -198,9 +198,8 @@ module.exports  = {
                return res.json({status: "fail", message:"server error"});
           }
      },
-     getUserDashInfo: async(req,res) => {
+     getUserDashInfo: async(userId) => {
           try {
-               let userId = req.body.userId;
                let data = {};
                await Promise.all([
                     new Promise(resolve => {

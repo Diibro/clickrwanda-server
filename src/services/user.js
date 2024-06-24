@@ -4,7 +4,8 @@ const {v4:uuidv4} = require("uuid");
 
 const   UserModel = require('../models/userModel');
 const  { comparePassword, hashPassword } = require('../utils/hashFunctions');
-
+const ReviewModel = require("../models/reviews.model")
+const WebviewModel = require("../models/WebView.model");
 
 const loginUser = (req,res) => {
      try {
@@ -122,8 +123,21 @@ const userService = {
                console.log(error);
                return {status:'fail', message: "error fetching users Refered"}
           }
-     }
-
+     },
+     getUserDashInfo: async(userId) => {
+          try {
+               const data = {};
+               const userReviews = await ReviewModel.getUserReviews(userId);
+               const userViews = await WebviewModel.findByVId(userId);
+               console.log(userViews);
+               data.userReviews = userReviews.data; 
+               data.userVisits = userViews; 
+               return {status: "success", message: "successfull fetched user dashboard information", data};
+          } catch (error) {
+               console.log(error);
+               return {status: "fail", message: "server error", data: null}
+          }
+     } 
 }
 
 

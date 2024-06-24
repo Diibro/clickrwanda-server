@@ -9,6 +9,7 @@ const subCategoryQueries = require('../sql/SubCategoryQueries');
 const locationChecker = require('../utils/locationChecker');
 
 const queries = require("../sql/AdvertQueries");
+const { stringfyObject } = require('../utils/jsonFunctions');
 
 const advertModel = {
      name: "advert",
@@ -26,8 +27,7 @@ const advertModel = {
      add: async(req, res) => {
           try {
                const  ad_id = uuidv4();
-               const desc = {desc: req.body.description};
-               let ad_description = JSON.stringify(desc);
+               const ad_description = req.body.description;
                const info = req.body;
                const ad_upload = await uploadImage(req.files.image[0].path, folders.adverts);
                if(ad_upload.status){
@@ -76,7 +76,7 @@ const advertModel = {
                          }else{
                               other_images =  JSON.stringify(ad.ad_images);
                          }
-                         const desc = info.description ? {desc: info.description} : null;
+                         const desc = info.description ? info.description : null;
                          const new_desc = JSON.stringify(desc || ad.description);
                          const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.contact || ad.contact, info.ad_price || ad.ad_price, info.ad_discount || ad.ad_discount, info.ad_id, userId ];
 
@@ -244,7 +244,7 @@ const advertModel = {
                               new Promise((resolve, reject) => {
                                    db.query(queries.getSimilarSubCategory, [data[0].sub_id, info.ad_id], (subError, subAds) => {
                                         if(subError) {
-                                             subCategoryAds = null;
+                                             subCategoryAds = [];
                                         }
                                         if(subAds[0]) {
                                              subCategoryAds = subAds;
@@ -256,7 +256,7 @@ const advertModel = {
                               new Promise((resolve, reject) => {
                                    db.query(queries.getSimilarCategory, [data[0].category_id, info.ad_id], (catErr, catAds) => {
                                         if(catErr) {
-                                             categoryAds = null;
+                                             categoryAds = [];
                                         }
                                         if(catAds[0]) {
                                              categoryAds = catAds;

@@ -11,7 +11,7 @@ userRouter.post('/3', authenticateUser, logoUpload,async (req,res) => await user
 userRouter.get('/4', authenticateUser, async (req,res) => await userController.searchUser(req, res));
 userRouter.delete('/5', authenticateUser, async (req,res) => await userModel.deleteUser(req, res));
 userRouter.post('/get-ref', authenticateUser, async(req,res) => await userController.findByRef(req,res));
-
+userRouter.post('/get-user-dash-info', authenticateUser,async(req,res) => await userController.getUserDashInfo(req,res));
 //user authentication routes
 
 userRouter.post('/login', async (req,res) => await userController.login(req, res));
@@ -19,6 +19,7 @@ userRouter.post('/rate-user', async (req,res) => await userModel.rateUser(req, r
 userRouter.post('/request-password-reset', async (req, res) => await userModel.resetPasswordRequest(req, res));
 userRouter.post('/get-reset-email', async (req, res) => await userModel.getPasswordResetEmail(req, res));
 userRouter.post('/reset-password', async (req, res) => await userModel.resetPassword(req, res));
+
 // userRouter.post('/logout', (req, res) => userController.logout(req, res));
 
 

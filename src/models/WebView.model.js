@@ -37,6 +37,7 @@ module.exports = {
                }else{
                     db.query(queries.findUserVisits, [userId], (error, result) => {
                          if(error){
+                              console.log(error);
                               reject(error);
                          }else{
                               resolve(result)
