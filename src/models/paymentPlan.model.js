@@ -2,91 +2,52 @@ const {dbConnection: db} = require('../configs/database.config');
 const dbErrorHandler = require('../middlewares/dbError');
 
 const queries = require("../sql/PaymentPlanQueries");
+const { stringfyObject } = require('../utils/jsonFunctions');
 
 const payPlanModel = {
      name:"payment plan",
      
-     add: async(req, res) => {
-          try {
-               const info = req.body;
-               let description = JSON.stringify(info.description) || null;
-               
-               const price = Number(info.plan_amount);
-               const values = [info.plan_id, info.plan_name,price, description]
-               db.query(queries.addPaymentPlan, values, (err) => {
-                    if(err){
-                         return dbErrorHandler(err,res, payPlanModel.name);
-                    }
-                    return res.json({status:'pass', message:"sucessfully added the payment plan"});
-               });
-          } catch (error) {
-               return res.json({status: 'fail', message: 'server error', error});
-          }
+     add: async(plan) => {
+          return new Promise((resolve, reject) => {
+               const values = [plan.plan_id, plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.plan_type, plan.location, plan.plan_icon];
+               db.query(queries.addPaymentPlan, values, (error, result) => {
+                    if(error) reject(error);
+                    else resolve(result);
+               })
+          })
      },
-     update: async(req, res) => {
-          try {
-               const info = req.body;
-               db.query(queries.searchById, [info.plan_id], (error, data) =>{
-                    if(error){
-                         return dbErrorHandler(err, res, payPlanModel.name);
-                    }
-                    if(!data[0]){
-                         return res.json({status: 'fail', message:"payment plan does not exist in our database"});
-                    }
-                    const values = [info.plan_name || data[0].plan_name, Number(info.plan_amount) || data[0].plan_amount, JSON.stringify(info.description || data[0].description), info.plan_id];
-                    db.query(queries.updateById, values, (err) => {
-                         if(err){
-                              return dbErrorHandler(err, res, payPlanModel.name);
-                         }
-                         return res.json({status: 'pass', message: 'successfully updated'});
-                    });
-               });
-               
-          } catch (error) {
-               return res.json({status:'failed', message: 'server', error});
-          }
+     update: async(plan) => {
+          return new Promise ((resolve, reject) => {
+               const values = [plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.plan_type, plan.location, plan.plan_icon,plan.plan_id];
+               db.query(queries.updateById, values, (error, result) => {
+                    if(error) reject(error);
+                    else resolve(result);
+               } )
+          })
      },
-     findAll: async(req, res) => {
-          try {
-               db.query(queries.getAll, (err, data) => {
-                    if(err){
-                         return dbErrorHandler(err, res, payPlanModel.name);
-                    }
-                    return res.json({status: 'pass', data});
-               });
-          } catch (error) {
-               return res.json({status:"fail", message: "server error", error});
-          }
+     findAll: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.getAll, (error, result) => {
+                    if(error) reject(error);
+                    else resolve(result);
+               })
+          })
      },
-     delete: async(req, res) => {
-          try {
-               const info = req.body;
-               db.query(queries.deleteById, [info.plan_id], (err) => {
-                    if(err){
-                         return dbErrorHandler(err, res, payPlanModel.name);
-                    }
-                    return res.json({status: 'pass', message: 'deleted the payment plan successfully'});
-               });
-          } catch (error) {
-               return res.json({status: 'fail', message: 'server error', error});
-          }
+     delete: async(plan_id) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.deleteById, [plan_id], (error, result)  => {
+                    if(error) reject(error);
+                    else resolve(result);
+               })
+          })
      },
-     search: async(req, res) => {
-          try {
-               const info = req.body;
-               db.query(queries.searchById, [info.plan_id], (error, data) =>{
-                    if(error){
-                         return dbErrorHandler(err, res, payPlanModel.name);
-                    }
-                    if(!data[0]){
-                         return res.json({status: 'fail', message:"payment plan does not exist in our database"});
-                    }
-                    return res.json({status: 'pass', data});
-               });
-               
-          } catch (error) {
-               return res.json({status:'failed', message: 'server', error});
-          }
+     search: async(plan_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.searchById, [plan_id], (error, result) => {
+                    if(error) reject(error);
+                    else resolve(result);
+               })
+          })
      },
 };
 

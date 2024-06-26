@@ -1,12 +1,12 @@
 const express = require('express');
 const paymentPlanRouter = express.Router();
-const payPlanModel = require('../models/paymentPlan.model');
+const PaymentPlanController = require("../controllers/PaymentPlanController");
 const { payPlanUpload } = require('../middlewares/upload');
 
-paymentPlanRouter.get('/1', async (req, res) => await payPlanModel.findAll(req, res));
-paymentPlanRouter.post('/2', payPlanUpload, async (req, res) => await payPlanModel.add(req, res));
-paymentPlanRouter.post('/3', payPlanUpload, async (req, res) => await payPlanModel.update(req, res));
-paymentPlanRouter.post('/4', async (req, res) => await payPlanModel.search(req, res));
-paymentPlanRouter.delete('/5', async (req, res) => await payPlanModel.delete(req, res));
+paymentPlanRouter.get('/1', async (req, res) => await PaymentPlanController.findAll(req, res));
+paymentPlanRouter.post('/2', payPlanUpload, async (req, res) => await PaymentPlanController.save(req, res));
+paymentPlanRouter.post('/3', payPlanUpload, async (req, res) => await PaymentPlanController.update(req, res));
+paymentPlanRouter.post('/4', async (req, res) => await PaymentPlanController.search(req, res));
+paymentPlanRouter.delete('/5', async (req, res) => await PaymentPlanController.delete(req, res));
 
 module.exports = paymentPlanRouter;
