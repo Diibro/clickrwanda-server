@@ -30,7 +30,15 @@ module.exports  = {
      },
      register: async (info) => {
                return new Promise((resolve) => {
-                         const values = [info.user_id, info.email,info.name, info.username, info.phone, info.password, info.user_image,info.registrationDate,info.location,info.userType, info.r_id !== 'null' || !info.r_id  ? info.r_id : null];
+                    console.log(info);
+                         const values = [
+                              info.user_id, info.email,
+                              info.name, info.username, 
+                              info.phone, info.password, 
+                              info.user_image,info.registrationDate,
+                              stringfyObject(info.location),info.userType, 
+                              info.r_id !== 'null' || !info.r_id  ? info.r_id : null, 
+                              info.business_type];
                          db.query(queries.createUserRef, values ,async (err) => {
                               if (err){
                                    resolve({status:"fail",message:"database error",error:err});

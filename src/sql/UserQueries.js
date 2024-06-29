@@ -1,7 +1,7 @@
 module.exports = {
      selectAll: "select * from users where user_type <> 'admin';",
      createUser: "insert into users (user_id, user_email,full_name, username, user_phone, user_password, profile_image, reg_date, user_location, user_type,active,verified) values (?, ?,?, ?, ?,?,?,?,?,?,true,false)",
-     createUserRef: "insert into users (user_id, user_email,full_name, username, user_phone, user_password, profile_image, reg_date, user_location, user_type,r_id,active) values (?, ?,?, ?, ?,?,?,?,?,?,?,true)",
+     createUserRef: "insert into users (user_id, user_email,full_name, username, user_phone, user_password, profile_image, reg_date, user_location, user_type,r_id,active, business_type) values (?, ?,?, ?, ?,?,?,?,?,?,?,true,?)",
      updateQuery: "update users set full_name = ?, username = ?, user_phone = ?, profile_image = ?, user_location = ?, website = ?, ad_plan_id = ?,active = ?, verified = ?  where user_id = ? ",
      searchQuery: "select user_id, full_name, username, user_email, user_phone, profile_image, user_location, user_type,date_format(reg_date, '%Y-%m-%d') as reg_date, rating,active, verified from users where user_id = ?;",
      deleteQuery: "delete from users where user_id = ? ",

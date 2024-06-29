@@ -6,7 +6,7 @@ const authenticateUser = require('../middlewares/auth');
 const userController = require("../controllers/UserController");
 
 userRouter.get('/1', async (req,res) => await userController.findAll(req, res));
-userRouter.post('/2',logoUpload,async (req,res) => await userController.register(req, res));
+userRouter.post('/2',async (req,res) => await userController.register(req, res));
 userRouter.post('/3', authenticateUser, logoUpload,async (req,res) => await userController.updateUser(req, res));
 userRouter.get('/4', authenticateUser, async (req,res) => await userController.searchUser(req, res));
 userRouter.delete('/5', authenticateUser, async (req,res) => await userModel.deleteUser(req, res));

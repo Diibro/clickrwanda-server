@@ -7,6 +7,7 @@ const userQueries = require('../sql/UserQueries');
 const categoryQueries = require('../sql/CategoryQueries');
 const subCategoryQueries = require('../sql/SubCategoryQueries');
 const locationChecker = require('../utils/locationChecker');
+const webViewModel = require('../models/WebView.model');
 
 const queries = require("../sql/AdvertQueries");
 const { stringfyObject } = require('../utils/jsonFunctions');
@@ -20,6 +21,26 @@ const advertModel = {
                          reject(error);
                     }else{
                          resolve(res);
+                    }
+               })
+          })
+     },
+     getAllApproved: async() => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectAllApproved, (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     save: async(ad) => {
+          return  new Promise((resolve,reject) => {
+               const values = [ad.ad_id, ad.ad_name, stringfyObject(ad.description), ad.ad_image, stringfyObject(ad.ad_images),ad.ad_type, ad.user_id, ad.ad_price, ad.sub_category_id, ad.registrationDate,ad.contact ];
+               db.query(queries.add, values, (error, data) => {
+                    if(error) {
+                         reject(error);
+                    }else{
+                         resolve(data);
                     }
                })
           })
@@ -97,7 +118,7 @@ const advertModel = {
      updateAd: async(ad) => {
           return new Promise((resolve,reject) => {
                const values = [
-                    ad.ad_name, ad.description, 
+                    ad.ad_name, stringfyObject(ad.description), 
                     ad.ad_image,
                     ad.ad_type, ad.ad_price, 
                     ad.sub_category_id, ad.status, 
@@ -226,91 +247,21 @@ const advertModel = {
                return res.json({status:"fail", message:"server error", error});
           }
      },
-     search: async(req, res) => {
-          try {
-               
-               locationChecker(req,res);
-               const info = req.body;
-               db.query(queries.search, [info.ad_id], async (err, data) => {
-                    if(err){
-                         return dbErrorHandler(err, res, advertModel.name);
-                    }
-                    if(data[0]){
-                         let  subCategoryAds = null;
-                         let categoryAds = null;
-                         let userViews = 0;
-                         let totalAds = 0;
-                         await Promise.all([
-                              new Promise((resolve, reject) => {
-                                   db.query(queries.getSimilarSubCategory, [data[0].sub_id, info.ad_id], (subError, subAds) => {
-                                        if(subError) {
-                                             subCategoryAds = [];
-                                        }
-                                        if(subAds[0]) {
-                                             subCategoryAds = subAds;
-                                        }
-                                        resolve();
-                                   });
-                              }),
-
-                              new Promise((resolve, reject) => {
-                                   db.query(queries.getSimilarCategory, [data[0].category_id, info.ad_id], (catErr, catAds) => {
-                                        if(catErr) {
-                                             categoryAds = [];
-                                        }
-                                        if(catAds[0]) {
-                                             categoryAds = catAds;
-                                        }
-                                        resolve();
-                                   })
-                              }),
-                              new Promise((resolve, reject) => {
-                                   db.query(queries.addAdView, [data[0].ad_views + 1, data[0].ad_id], (addError) => {
-                                        if(addError){
-                                             reject(addError);
-                                        }
-                                        else{
-                                             resolve();
-                                        }
-                                   })
-                              }),
-
-                              new Promise((resolve, reject) => {
-                                   db.query(userQueries.getUserViews, [data[0].user_id], (userError, result) =>{
-                                        if(userError){
-                                             reject(userError);
-                                        }
-                                        if(result[0]) {
-                                             userViews = result[0].total_views;
-                                             resolve();
-                                        }
-                                        
-                                   } )
-                              }),
-                              new Promise((resolve, reject) => {
-                                   db.query(userQueries.getUserAdsTotal, [data[0].user_id], (totalError, result) => {
-                                        if(totalError){
-                                             totalAds = NaN;
-                                             reject(totalError);
-                                        }else{
-                                             totalAds = result[0].total_ads;
-                                        }
-                                        resolve();
-                                   })
-                              })
-                         ]);
-                         
-                         const newData = data[0];
-                         newData.totalViews = userViews;
-                         newData.total_ads = totalAds;
-                         return res.json({status:'pass', data:{adData: newData, sameCategory: categoryAds, sameSubCategory:subCategoryAds}});
+     search: async(ad_id) => {
+          return new Promise((resolve,reject)=> {
+               console.log(ad_id);
+               db.query(queries.search, [ad_id], (error, data) => {
+                    if(error){
+                         reject(error);
                     }else{
-                         return res.json({status: "fail", message: 'no data found', data: null});
+                         if(data[0]){
+                              resolve(data[0])
+                         }else{
+                              resolve(null);
+                         }
                     }
                })
-          } catch (error) {
-               return res.json({status: "fail", message: "server error"});
-          }
+          } )
      },
      getCategorized: async(req, res) => {
           try {

@@ -64,6 +64,7 @@ const userService = {
      },
      updateUser: async(user) => {
           try {
+               console.log(user);
                const existingUser = await UserModel.searchId(user.user_id); 
                if(existingUser){
                     if(user.newPassword){
@@ -90,19 +91,7 @@ const userService = {
                          }else{
                               const userId = existingUser.user_id;
                               const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
-                              
-                              const userInfo = {
-                                   id: existingUser.user_id,
-                                   name: existingUser.full_name,
-                                   username: existingUser.username,
-                                   email: existingUser.user_email,
-                                   phone: existingUser.user_phone,
-                                   profile_image: existingUser.profile_image,
-                                   location: existingUser.user_location,
-                                   role:existingUser.user_type,
-                                   active: existingUser.active
-                              };
-                              return {status:"pass", message: "successfully logged in", data: userInfo, loginToken:token}
+                              return {status:"pass", message: "successfully logged in", data: existingUser, loginToken:token}
                          }
                     }else{
                          return {status:"fail", message: "Account inactive. Contact support"}

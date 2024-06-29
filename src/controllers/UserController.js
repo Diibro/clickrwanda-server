@@ -9,17 +9,6 @@ module.exports = {
      register: async(req,res) => {
           const info = req.body;
           if(info != null || info != undefined){
-               if(req.file){
-                    const uploadedImage = await uploadImage(req.file.path, folders.logos);
-                    if(uploadedImage.status){
-                         info.user_image = uploadedImage.image;
-                    }else{
-                         info.user_image = unknownImage;
-                    }
-               }else{
-                    info.user_image = unknownImage;
-               }
-
                const result = await userService.save(info);
                if(result.error){
                     return dbErrorHandler(result.error, res, 'user');
