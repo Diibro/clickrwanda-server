@@ -20,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1651.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
     "cloudinary-build-url": "^0.2.4",

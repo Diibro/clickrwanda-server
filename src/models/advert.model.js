@@ -227,16 +227,13 @@ const advertModel = {
                          const other_images = ad.ad_images;
                          let imageDeleted = await  deleteImage(mainImage);
                          let imagesDeleted = await deleteImages(other_images);
-                         if(imageDeleted.status && imagesDeleted.status){
-                              db.query(queries.delete, [info.ad_id], (err) => {
-                                   if(err){
-                                        return res.json({status:"fail", message: "unable to delete the advert", err});
-                                   }
-                                   return res.json({status: "pass", message: "deleted the ad successfully"});
-                              });
-                         }else{
-                              return res.json({status: "fail", message: "can't delete image from server"});
-                         }
+                         db.query(queries.delete, [info.ad_id], (err) => {
+                              if(err){
+                                   return res.json({status:"fail", message: "unable to delete the advert", err});
+                              }
+                              return res.json({status: "pass", message: "deleted the ad successfully"});
+                         });
+                         
                     }else{
                          return res.json({status: 'fail', message: "advert does not exist in our database"});
                     }

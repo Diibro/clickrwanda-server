@@ -6,6 +6,8 @@ const storage = multer.diskStorage({
      }
 });
 
+const memoryStorage = multer.memoryStorage()
+
 const fileFilter = (req, file, cb) => {
      if(file.mimetype.split('/')[0] === 'image'){
           return  cb(null, true);
@@ -22,6 +24,10 @@ const fileUpload = multer({storage}).single('file');
 
 const advertSingleUpload = advertUpload.single('image');
 
-const advertMultiUpload = advertUpload.fields([{name: 'image', maxCount: 1}, {name: 'otherImage', maxCount: 4}]);
 
-module.exports = {logoUpload, advertMultiUpload, payPlanUpload, categoryUpload, advertSingleUpload, fileUpload};
+const awsFileUpload = multer({memoryStorage});
+
+const advertMultiUpload = advertUpload.fields([{name: 'image', maxCount: 1}, {name: 'otherImage', maxCount: 4}]);
+const singleFileUpload = awsFileUpload.single('image');
+const multiFileUpload = awsFileUpload.array('images');
+module.exports = {logoUpload, advertMultiUpload, payPlanUpload, categoryUpload, advertSingleUpload, fileUpload, singleFileUpload, multiFileUpload};

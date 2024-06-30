@@ -11,6 +11,7 @@ const quotationRouter = require('./quotation');
 const agentRouter = require("./agent");
 const viewRouter = require('./webView');
 const agentPayRouter = require("./agentPayment");
+const fileUploadRouter = require("./fileUpload");
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
@@ -22,6 +23,7 @@ mainRouter.use('/quotation', quotationRouter);
 mainRouter.use("/agent", agentRouter);
 mainRouter.use("/web-view", viewRouter);
 mainRouter.use('/agent-pay', agentPayRouter);
+mainRouter.use('/file-upload', fileUploadRouter);
 mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });
