@@ -8,8 +8,9 @@ const payPlanModel = {
      name:"payment plan",
      
      add: async(plan) => {
+          console.log(plan);
           return new Promise((resolve, reject) => {
-               const values = [plan.plan_id, plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.type, plan.location, plan.plan_icon];
+               const values = [plan.plan_id, plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.type, plan.location, plan.plan_icon, plan.active];
                db.query(queries.addPaymentPlan, values, (error, result) => {
                     if(error) reject(error);
                     else resolve(result);

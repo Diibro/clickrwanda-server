@@ -10,6 +10,7 @@ module.exports = {
                     return {status: "fail", message: "invalid payment plan."}
                }
           } catch (error) {
+               console.log(error);
                return {status: "fail", message: "cannot add payment plan", dbError: error}
           }
      },

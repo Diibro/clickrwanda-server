@@ -4,7 +4,7 @@ const {v4: uuidv4} = require('uuid');
 module.exports = {
      uploadFile: async(file, folder) => {
           console.log(file);
-          const uniqueKey = `${uuidv4()}-${file.filename}`;
+          const uniqueKey = `${uuidv4()}-${file.originalname}`;
           const filePath = `${folder}/${uniqueKey}`
           
           try {
