@@ -1,10 +1,11 @@
 const { s3Config, s3 } = require("../configs/aws-config");
 const {v4: uuidv4} = require('uuid');
+const { dashReplacer } = require("../utils/stringFunctions");
 
 module.exports = {
      uploadFile: async(file, folder) => {
           console.log(file);
-          const uniqueKey = `${uuidv4()}-${file.originalname}`;
+          const uniqueKey = `${uuidv4()}-${dashReplacer(file.originalname)}`;
           const filePath = `${folder}/${uniqueKey}`
           
           try {
@@ -26,7 +27,7 @@ module.exports = {
           const fileUrls = [];
           if (files && files.length > 0) {
                for (const file of files) {
-                    const uniqueKey = `${uuidv4()}-${file.originalname}`;
+                    const uniqueKey = `${uuidv4()}-${dashReplacer(file.originalname)}`;
                     const filePath = `${folder}/${uniqueKey}`;
           
                     try {
