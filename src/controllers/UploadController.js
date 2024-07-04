@@ -14,7 +14,6 @@ module.exports = {
      uploadMany: async(req,res) => {
           try {
                const info = req.body;
-               console.log(req.files);
                const result = await UploadService.uploadMany(req.files, info.folderName);
                return res.json(result);
           } catch (error) {
