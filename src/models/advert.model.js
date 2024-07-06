@@ -297,7 +297,7 @@ const advertModel = {
           try {
                db.query(queries.getUserAdverts, [req.userId], (err, result) => {
                     if(err) return dbErrorHandler(err, res, "user");
-                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result[0] ? result : "no adverts found"});
+                    return res.json({status: "pass", message: "user adverts fetch successfully", data: result});
                });  
           } catch (error) {
                return res.json({status: 'fail', message: "Server error"});
