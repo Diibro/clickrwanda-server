@@ -8,7 +8,8 @@ const corsMiddleWare = () => {
     'http://localhost:5173',
     'https://clickrwanda.com',
     'https://www.clickrwanda.com',
-    'https://clickrwanda-client.vercel.app/'
+    'https://clickrwanda-client.vercel.app/',
+    "https://share.clickrwanda.com"
   ];
 
   return cors({
