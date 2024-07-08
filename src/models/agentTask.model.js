@@ -36,5 +36,13 @@ module.exports = {
                     else resolve(data);
                } )
           })
+     },
+     findByAgent: async(agent_id) =>{
+          return new Promise((resolve, reject) =>{
+               db.query(queries.selectByAgent, [`"${agent_id}"`], (error, data) =>{
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
      }
 }

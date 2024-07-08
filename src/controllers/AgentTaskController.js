@@ -24,5 +24,11 @@ module.exports = {
           const result = await service.delete(task);
           if(result.dbError) return dbErrorHandler(result.dbError, res, "Agent Task");
           return res.json(result);
+     },
+     findByAgent: async(req,res) =>{
+          const {agent_id} = req.body;
+          const result = await service.findByAgent(agent_id);
+          if(result.dbError) return dbErrorHandler(result.dbError, res, "Agent Task");
+          return res.json(result);
      }
 }

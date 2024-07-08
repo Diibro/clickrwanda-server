@@ -33,4 +33,13 @@ module.exports = {
                return {status: "fail", message: "database error", dbError: error}
           }
      },
+     findByAgent: async(agent_id) =>{
+          try {
+               const res = await model.findByAgent(agent_id);
+               return {status: "pass", message: "Agent Task Data fetched sucessfully", data: res};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail',message: "data error", dbError: error}
+          }
+     }
 }
