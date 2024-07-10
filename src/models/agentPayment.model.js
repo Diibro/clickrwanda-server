@@ -48,7 +48,7 @@ module.exports = {
           return new Promise((resolve, reject) => {
                if(item){
                     const values = [item.status, item.amount, item.agent_id,item.p_date];
-                    db.query(queries.insertOne, values, (error,data) => {
+                    db.query(queries.update, values, (error,data) => {
                          if(error){
                               reject(error);
                          }else{
