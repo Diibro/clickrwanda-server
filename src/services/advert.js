@@ -1,7 +1,7 @@
 const advertModel = require("../models/advert.model");
 const webViewModel = require("../models/WebView.model");
 const {v4: uuidv4} = require('uuid');
-
+const {getIo} = require('../configs/socket-io')
 
 
 module.exports = {
@@ -53,6 +53,9 @@ module.exports = {
           try {
                ad.ad_id = uuidv4();
                const res = await advertModel.save(ad);
+               const io = getIo();
+               if(io) io.emit('new-advert', ad);
+               else console.log('io not defined')
                return {status: "pass", message: "Successfully added the advert", data: res};
           } catch (error) {
                return {status: "fail", message:"Error adding the advert", dbError: error, data:null}
