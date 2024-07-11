@@ -3,11 +3,27 @@ const socketIo = require('socket.io');
 let io;
 let activeUsers = 0;
 const ips = {};
+const acceptedUrls = [
+     'http://localhost:3000',
+     'http://localhost:3001',
+     'http://localhost:3002',
+     'http://localhost:5173',
+     'https://clickrwanda.com',
+     'https://www.clickrwanda.com',
+     'https://clickrwanda-client.vercel.app',
+     'https://share.clickrwanda.com'
+];
 
 function initializeSocket(server) {
      io = socketIo(server, {
      cors: {
-          origin: "http://localhost:5173", // Adjust this to match your client app's origin
+          origin: (origin, callback) => {
+               if (acceptedUrls.includes(origin) || !origin) {
+                    callback(null, true);
+               } else {
+                    callback(new Error('Not allowed by CORS'));
+               }
+          },
           methods: ["GET", "POST"],
           credentials: true
      }
@@ -15,7 +31,6 @@ function initializeSocket(server) {
 
      io.on('connection', (socket) => {
           const ipAddress = socket.handshake.address;
-          console.log(ips)
           if(ips[ipAddress]) {
                ips[ipAddress] += 1;
           }else {
@@ -24,7 +39,6 @@ function initializeSocket(server) {
                io.emit('online-users', activeUsers);
           }
           socket.on('disconnect', () => {
-               console.log('User disconnected');
                if(ips[ipAddress]) {
                     ips[ipAddress] -= 0;
                     if(ips[ipAddress] === 0 ){
