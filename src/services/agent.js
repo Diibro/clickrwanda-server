@@ -58,10 +58,9 @@ module.exports = {
                if(agent != null){
                     const eAgent= await agentModel.findById(agent.agent_id);
                     if(eAgent != null || agent != undefined){
-                         const match = comparePassword(agent.a_password, eAgent.a_password);
                          let newPassword = "";
-                         if(!match){
-                              newPassword = await hashPassword(agent.a_password);
+                         if(agent.new_password && agent.newPassword !== ''){
+                              newPassword = await hashPassword(agent.new_password);
                          }else{
                               newPassword = eAgent.a_password;
                          }
