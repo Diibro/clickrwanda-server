@@ -21,8 +21,8 @@ module.exports = {
      },
      update: async(item) => {
           return new Promise((resolve,reject) => {
-               const values = [item.plan_type, item.amount, item.status, item.exp_date, item.plan_id, item.user_id, item.subscription_date];
-               db.query(queries.insertOne, values, (error, data) => {
+               const values = [item.status, item.payment_id];
+               db.query(queries.update, values, (error, data) => {
                     if(error) reject(error);
                     resolve(data);
                })
