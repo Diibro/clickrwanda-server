@@ -6,7 +6,7 @@ const authenticateUser = require('../middlewares/auth');
 const AdvertController = require('../controllers/AdvertController');
 
 advertRouter.get('/all-adverts', async (req,res) => AdvertController.findAll(req,res));
-advertRouter.get('/all-approved', async(req,res) => AdvertController.findAllApproved(req,res));
+advertRouter.post('/all-approved', async(req,res) => AdvertController.findCategorisedAds(req,res));
 advertRouter.post('/1',  async (req, res) => await advertModel.findAll(req, res));
 advertRouter.post('/2',authenticateUser, async (req, res) => await AdvertController.save(req, res));
 advertRouter.post('/3',authenticateUser, advertMultiUpload, async(req, res) => await advertModel.update(req, res));

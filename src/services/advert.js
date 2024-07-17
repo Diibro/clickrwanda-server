@@ -23,6 +23,54 @@ module.exports = {
                return({status: "fail", message: "Error fetching data", data: null, dbError: error});
           }
      },
+     getCategorisedAds: async(ops) => {
+          const adverts = {freeAds: [], freeAdsCount: 0, listingAds: [], listingAdsCount: 0, urgentAds: [], urgentAdsCount: 0, sponsoredAds: [], sponsoredAdsCount:0};
+          if(ops.freeAds){
+               try {
+                    const freeAdsInfo = await advertModel.getFreeAds(ops.freeAds);
+                    const count = await advertModel.countFreeAds();
+                    adverts.freeAds = [...freeAdsInfo];
+                    adverts.freeAdsCount = count;
+               } catch (error) {
+                    console.log(error);
+               }
+          }
+          
+          if(ops.listingAds) {
+               try {
+                    const listingAdsInfo = await advertModel.getListingAds(ops.listingAds);
+                    const count = await advertModel.countListingAds();
+                    adverts.listingAds = [...listingAdsInfo];
+                    adverts.listingAdsCount = count;
+               } catch (error) {
+                    console.log(error);
+               }
+          }
+
+          if(ops.urgentAds){
+               try {
+                    const urgentAdsInfo = await advertModel.getUrgentAds(ops.urgentAds);
+                    const count = await advertModel.countUrgentAds();
+                    adverts.urgentAds = [...urgentAdsInfo];
+                    adverts.urgentAdsCount = count;
+               } catch (error) {
+                    console.log(error);
+               }
+          }
+
+          if(ops.sponsoredAds){
+               try {
+                    const sponsoredAdsInfo = await advertModel.getSponsoredAds(ops.sponsoredAds);
+                    const count = await advertModel.countSponsoredAds();
+                    adverts.sponsoredAds = [...sponsoredAdsInfo];
+                    adverts.sponsoredAdsCount = count;
+               } catch (error) {
+                    console.log(error);
+               }
+          }
+
+          return {status: 'pass', message: "successfully fetched all the ads", data: adverts};
+     },
      update: async(ad) => {
           try {
                if(ad){

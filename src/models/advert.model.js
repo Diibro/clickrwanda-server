@@ -33,6 +33,70 @@ const advertModel = {
                })
           })
      },
+     getFreeAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectFreeAds,[ops.limit, ops.offset], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getListingAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectListingAds,[ops.limit, ops.offset], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getSponsoredAds:async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectSponsoredAds,[ops.limit, ops.offset], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getUrgentAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectUrgentAds,[ops.limit, ops.offset], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     countFreeAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countFreeAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countListingAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countListingAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countSponsoredAds: async() =>{
+          return new Promise((resolve,reject) => {
+               db.query(queries.countSponsoredAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countUrgentAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countUrgentAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
      save: async(ad) => {
           return  new Promise((resolve,reject) => {
                const values = [ad.ad_id, ad.ad_name, stringfyObject(ad.description), ad.ad_image, stringfyObject(ad.ad_images),ad.ad_type, ad.user_id, ad.ad_price, ad.sub_category_id, ad.registrationDate,ad.contact ];

@@ -13,6 +13,11 @@ module.exports = {
           if(result.dbError) return dbErrorHandler(result.dbError, res, "advert");
           return res.json(result);
      },
+     findCategorisedAds: async(req,res) => {
+          const ops = req.body;
+          const result = await advertService.getCategorisedAds(ops);
+          return res.json(result);
+     },
      update: async(req, res) => {
           const info = req.body;
           const result = await advertService.update(info);
