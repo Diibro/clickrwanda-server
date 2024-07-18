@@ -97,6 +97,14 @@ const advertModel = {
                })
           })
      },
+     countShopAds: async (shop_id) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countApprovedShopAds, [shop_id], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
      save: async(ad) => {
           return  new Promise((resolve,reject) => {
                const values = [ad.ad_id, ad.ad_name, stringfyObject(ad.description), ad.ad_image, stringfyObject(ad.ad_images),ad.ad_type, ad.user_id, ad.ad_price, ad.sub_category_id, ad.registrationDate,ad.contact ];

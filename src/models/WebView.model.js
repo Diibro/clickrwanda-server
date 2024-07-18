@@ -67,5 +67,21 @@ module.exports = {
                     }
                })
           })
+     },
+     countShopAdVisits: async(shop_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.countShopAdVisits, [shop_id], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total || 0);
+               })
+          })
+     },
+     countShopVisits: async(shop_id) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.countShopVisits, [shop_id], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total || 0);
+               })
+          })
      } 
 }

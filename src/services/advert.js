@@ -88,7 +88,10 @@ module.exports = {
           try {
                const res = await advertModel.search(ad_id);
                if(res){
-                    return {status:"pass", message: "success fetching advert information", data: res}
+                    const totalAds = await advertModel.countShopAds(res.user_id);
+                    const totalShopVisits = await webViewModel.countShopVisits(res.user_id);
+                    const totalShopAdVisits = await webViewModel.countShopAdVisits(res.user_id);
+                    return {status:"pass", message: "success fetching advert information", data: res, extraData: {totalAds, visits: totalShopAdVisits + totalShopVisits}}
                }else{
                     return {status: 'fail', message: "No advert data found", data:null}
                }
