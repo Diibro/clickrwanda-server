@@ -22,6 +22,6 @@ advertRouter.get('/get-user-adverts', authenticateUser, async (req, res) => awai
 advertRouter.post('/get-user-ads', async (req, res) => await advertModel.searchUserAds(req, res));
 advertRouter.post('/search-adverts', async (req, res) => await advertModel.searchAds(req, res));
 advertRouter.post('/search-user-ad', async (req, res) => await advertModel.searchUserAd(req, res));
-
+advertRouter.post('/get-similar-ads', async(req,res) => await AdvertController.getSimilarAds(req,res));
 module.exports = advertRouter;
 

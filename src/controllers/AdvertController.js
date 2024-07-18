@@ -55,5 +55,10 @@ module.exports = {
                return res.json({status: "fail", message: "You are not authenticated", data:null});
           }
           
+     },
+     getSimilarAds: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getSimilarAds(info);
+          return res.json(result);
      }
 }

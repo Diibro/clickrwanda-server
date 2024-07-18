@@ -105,6 +105,30 @@ const advertModel = {
                })
           })
      },
+     selectApprovedShopAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectApprovedShopAds, [ops.user_id, ops.limit, ops.offset], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     selectApprovedCategoryAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.selectApprovedCategoryAds, [ops.category_id, ops.limit, ops.offset], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     selectApprovedSubCategoryAds: async(ops) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectApprovedSubCategoryAds, [ops.sub_id, ops.limit, ops.offset], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
      save: async(ad) => {
           return  new Promise((resolve,reject) => {
                const values = [ad.ad_id, ad.ad_name, stringfyObject(ad.description), ad.ad_image, stringfyObject(ad.ad_images),ad.ad_type, ad.user_id, ad.ad_price, ad.sub_category_id, ad.registrationDate,ad.contact ];

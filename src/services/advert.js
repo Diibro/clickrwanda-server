@@ -111,5 +111,29 @@ module.exports = {
           } catch (error) {
                return {status: "fail", message:"Error adding the advert", dbError: error, data:null}
           }
+     },
+     getSimilarAds: async(ops) => {
+          const ads = {vendorAds:[], similarCategory: []}
+          if(ops.sameVendor) {
+               try {
+                    const vendorAds = await advertModel.selectApprovedShopAds(ops.sameVendor);
+                    ads.vendorAds = vendorAds;
+               } catch (error) {
+                    console.log(error);
+               }
+               
+          }
+
+          if(ops.similarCategory){
+               try {
+                    const catAds = await advertModel.selectApprovedCategoryAds(ops.similarCategory);
+                    ads.similarCategory = catAds;
+               } catch (error) {
+                    console.log(error);
+               }
+               
+          }
+
+          return {status:"pass", message: "successfully fetched similar ads", data: ads};
      }
 }
