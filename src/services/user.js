@@ -64,7 +64,6 @@ const userService = {
      },
      updateUser: async(user) => {
           try {
-               console.log(user);
                const existingUser = await UserModel.searchId(user.user_id); 
                if(existingUser){
                     if(user.newPassword){
@@ -102,6 +101,21 @@ const userService = {
           } catch (error) {
                console.log(error);
                return {status:"fail", message: "system error"}
+          }
+     },
+     loginWithOutPassword: async(email) => {
+          try {
+               const existingUser = await UserModel.searchByEmail(email);
+               if(existingUser){
+                    const userId = existingUser.user_id;
+                    const token = jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+                    return {status:"pass", message: "successfully logged in", data: existingUser, loginToken:token}
+               }else{
+                    return {status:"fail", message: "user does not exist", data: null};
+               }
+               
+          } catch (error) {
+               console.log(error);
           }
      },
      findByRef: async(r_id) => {

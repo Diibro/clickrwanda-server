@@ -13,6 +13,19 @@ module.exports = {
                if(result.error){
                     return dbErrorHandler(result.error, res, 'user');
                }
+               if(info.userType === "job-seeker"){
+                    const loginRes = await userService.loginWithOutPassword(info.email);
+                    if(loginRes.token){
+                         res.cookie('user-access-token', result.loginToken, {
+                              httpOnly: true,
+                              secure: process.env.NODE_ENV === 'production' ? true : false,
+                              sameSite: 'None',
+                              expiresIn: 2 * 60 * 60, 
+                         });
+                    }
+          
+                    return res.json(loginRes);
+               }
                return res.json(result);
           }else{
                return res.json({status: "fail", message: "invalid information."});
@@ -58,6 +71,7 @@ module.exports = {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production' ? true : false,
                     sameSite: 'None',
+                    signed:true,
                     expiresIn: 2 * 60 * 60, 
                });
           }

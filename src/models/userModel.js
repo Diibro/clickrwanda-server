@@ -30,7 +30,6 @@ module.exports  = {
      },
      register: async (info) => {
                return new Promise((resolve) => {
-                    console.log(info);
                          const values = [
                               info.user_id, info.email,
                               info.name, info.username, 

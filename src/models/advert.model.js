@@ -107,7 +107,7 @@ const advertModel = {
      },
      selectApprovedShopAds: async(ops) => {
           return new Promise((resolve, reject) => {
-               db.query(queries.selectApprovedShopAds, [ops.user_id, ops.limit, ops.offset], (error,data) => {
+               db.query(queries.selectApprovedShopAds, [ops.user_id, ops.ad_id || "undefined", ops.limit, ops.offset], (error,data) => {
                     if(error) reject(error);
                     else resolve(data);
                })
@@ -115,7 +115,7 @@ const advertModel = {
      },
      selectApprovedCategoryAds: async(ops) => {
           return new Promise((resolve, reject) => {
-               db.query(queries.selectApprovedCategoryAds, [ops.category_id, ops.limit, ops.offset], (error,data) => {
+               db.query(queries.selectApprovedCategoryAds, [ops.category_id, ops.ad_id || "undefined", ops.limit, ops.offset], (error,data) => {
                     if(error) reject(error);
                     else resolve(data);
                })

@@ -4,7 +4,6 @@ const { dashReplacer } = require("../utils/stringFunctions");
 
 module.exports = {
      uploadFile: async(file, folder) => {
-          console.log(file);
           const uniqueKey = `${uuidv4()}-${dashReplacer(file.originalname)}`;
           const filePath = `${folder}/${uniqueKey}`
           

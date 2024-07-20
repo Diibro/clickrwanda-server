@@ -6,8 +6,8 @@ const queries = require("../sql/AgentQueries");
 module.exports = {
      createAgent: async (agent)=>{
           return new Promise((resolve, reject)=> {
-               const {agent_id, a_name, a_email,a_phone, a_password, registrationDate, location,active, social_links,verified} = agent;
-               db.query(queries.insertOne, [agent_id,a_name, a_email,a_phone, a_password,location, registrationDate,active, verified, social_links], (error, result) => {
+               const {agent_id, a_name, a_email,a_phone, a_password, registrationDate, location,active, social_links,verified, agent_type} = agent;
+               db.query(queries.insertOne, [agent_id,a_name, a_email,a_phone, a_password,location, registrationDate,active, verified, social_links, agent_type], (error, result) => {
                     if(error){
                          reject(error)
                     }else{
