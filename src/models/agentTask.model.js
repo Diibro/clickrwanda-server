@@ -37,9 +37,9 @@ module.exports = {
                } )
           })
      },
-     findByAgent: async(agent_id) =>{
+     findByAgent: async(agent_id,agent_type) =>{
           return new Promise((resolve, reject) =>{
-               db.query(queries.selectByAgent, [`"${agent_id}"`], (error, data) =>{
+               db.query(queries.selectByAgent, [`"${agent_id}"`, agent_type], (error, data) =>{
                     if(error) reject(error);
                     else resolve(data);
                })

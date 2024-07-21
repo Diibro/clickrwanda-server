@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 module.exports = {
      addAgent: async (agent) => {
           try {
-               console.log(agent);
                if(agent != null){
                     let agent_id = "agent_";
                     const count = await agentModel.countAll();
@@ -27,7 +26,7 @@ module.exports = {
      loginAgent: async(agent) =>{
           try {
                if(agent != null) {
-                    const exisitingAgent = await agentModel.findByEmail(agent.a_email);
+                    const exisitingAgent = await agentModel.findByEmail(agent.a_email, agent.agent_type);
                     if(exisitingAgent != null && exisitingAgent){
                          if(exisitingAgent.active){
                               const match = await comparePassword(agent.a_password, exisitingAgent.a_password);
@@ -42,7 +41,7 @@ module.exports = {
                               return {status: "fail", message: "You account is inactive. Contact technical Support"}
                          }
                     }else{
-                         return {status:"fail", message:"agent does not exist", data: null};
+                         return {status:"fail", message:`${agent.agent_type} account does not exist.`, data: null};
                     }
                     
                }else{

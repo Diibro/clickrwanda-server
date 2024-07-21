@@ -3,7 +3,7 @@ module.exports = {
      countAll:"select count(*) as agents from agents",
      insertOne: "insert into agents(agent_id,a_name, a_email, a_phone, a_password, location,registration_date,active, verified, social_links,agent_type ) values (?,?,?,?,?,?,?,?,?,?,?)",
      selectById: "select * from agents where agent_id = ?",
-     selectByEmail: "select * from agents where a_email = ?",
+     selectByEmail: "select * from agents where a_email = ? and agent_type = ?",
      updateById: "update agents set a_name = ?,a_email = ?, a_phone = ?,a_password = ?, location = ?, active = ?, verified = ?, social_links = ? where agent_id = ?",
      deleteById: "delete from agents where agent_id = ?",
 }

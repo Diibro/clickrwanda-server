@@ -43,9 +43,9 @@ module.exports = {
           })
           
      },
-     findByEmail: async(email) => {
+     findByEmail: async(email, agent_type) => {
           return new Promise((resolve, reject) => {
-               db.query(queries.selectByEmail, [email], (error, result) => {
+               db.query(queries.selectByEmail, [email, agent_type], (error, result) => {
                     if(error){
                          reject(error);
                     }else{
