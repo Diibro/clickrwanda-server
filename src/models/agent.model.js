@@ -43,6 +43,22 @@ module.exports = {
           })
           
      },
+     countAllAgents: async(type) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countAllAgents, [type], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countNewAgents:async(type,date) =>{
+          return new Promise((resolve,reject) => {
+               db.query(queries.countNewAgents, [type,date], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
      findByEmail: async(email, agent_type) => {
           return new Promise((resolve, reject) => {
                db.query(queries.selectByEmail, [email, agent_type], (error, result) => {

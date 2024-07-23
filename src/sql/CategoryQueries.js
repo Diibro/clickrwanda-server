@@ -5,4 +5,5 @@ module.exports = {
      searchQuery: "select * from category where category_id = ?;",
      deleteQuery: "delete from category where category_id = ? ;",
      deleteSubs: "delete from sub_category where parent_id = ? ;",
+     countAll: "select count(*) as total from category;"
 }

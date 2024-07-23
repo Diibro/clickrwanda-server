@@ -469,6 +469,22 @@ const advertModel = {
           } catch (error) {
                return res.json({status: "fail", message: "server error"});
           }
+     },
+     countAllAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countAllAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countNewAds: async(date) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countNewAds, [date], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
      }
 };
 

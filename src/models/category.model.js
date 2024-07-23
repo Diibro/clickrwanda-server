@@ -124,8 +124,15 @@ const categoryModel = {
                     return res.json({status: "fail", message: "category does not exist"});
                }
           });
+     },
+     countAll: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countAll, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
      }
-
 }
 
 module.exports = categoryModel;

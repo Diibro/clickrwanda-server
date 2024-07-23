@@ -14,6 +14,7 @@ const agentPayRouter = require("./agentPayment");
 const fileUploadRouter = require("./fileUpload");
 const PlanSubscriptionRouter = require('./planSubscription');
 const AgentTaskRouter = require('./agentTask');
+const AdminRouter = require('./admin');
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
@@ -28,6 +29,7 @@ mainRouter.use('/agent-pay', agentPayRouter);
 mainRouter.use('/file-upload', fileUploadRouter);
 mainRouter.use('/plan-subscription', PlanSubscriptionRouter)
 mainRouter.use('/agent-task', AgentTaskRouter);
+mainRouter.use('/admin', AdminRouter);
 mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });

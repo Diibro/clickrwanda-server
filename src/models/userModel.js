@@ -28,7 +28,7 @@ module.exports  = {
                } )
           });
      },
-     register: async (info) => {
+     register: async (info) => {   
                return new Promise((resolve) => {
                          const values = [
                               info.user_id, info.email,
@@ -268,8 +268,23 @@ module.exports  = {
                     }
                })
           })
+     },
+     countAllUsers: async(type) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countAllUsers, [type], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     countNewUsers: async(type,date) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countNewUsers, [type,date],(error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
      }
-
 }
 
 
