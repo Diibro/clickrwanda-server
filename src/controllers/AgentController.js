@@ -1,3 +1,4 @@
+const dbErrorHandler = require("../middlewares/dbError");
 const agentService = require("../services/agent");
 
 module.exports = {
@@ -31,5 +32,14 @@ module.exports = {
      findAll: async(req,res) => {
           const result = await agentService.getAll();
           return res.json(result);
+     },
+     resetPassword: async(req,res) => {
+          const agent = req.body;
+          const result = await agentService.resetPassword(agent);
+          if(result.dbError){
+               return dbErrorHandler(result.dbError);
+          }else{
+               return res.json(result);
+          }
      }
 }

@@ -85,5 +85,25 @@ module.exports = {
                console.log(error);
                return {status:"fail", message:"system error", data:null}
           }
+     },
+     resetPassword: async(agent) => {
+          try{
+               const savedAgent = await agentModel.findByEmail(agent.a_email, agent.agent_type);
+               if(savedAgent){
+                    if(savedAgent.a_phone === agent.a_phone){
+                         const newPassword = await hashPassword(agent.new_password);
+                         savedAgent.a_password = newPassword;
+                         const res = await agentModel.update(savedAgent);
+                         return {status: 'pass', message: `${agent.agent_type} password reset successfully.`, data: res}
+                    }else{
+                         return {status: 'fail', message: "Invalid phone number", data: null}
+                    }
+               }else {
+                    return {status: 'fail', message: `${agent.agent_type} found with that email.`, data: null}
+               }
+          }catch(error){
+               console.log(error);
+               return {status: 'fail', message: 'database error', dbError: error}
+          }
      }
 }

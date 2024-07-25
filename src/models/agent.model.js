@@ -2,6 +2,7 @@ const { resolve } = require('path');
 const {dbConnection: db}= require('../configs/database.config');
 const { countAll } = require('../sql/AdvertQueries');
 const queries = require("../sql/AgentQueries");
+const { stringfyObject } = require('../utils/jsonFunctions');
 
 module.exports = {
      createAgent: async (agent)=>{
@@ -97,7 +98,7 @@ module.exports = {
      update: async(agent) => {
           return new Promise((resolve,reject) => {
                const {agent_id, a_name, a_email,a_phone, a_password, active, location, verified, social_links}  = agent;
-               db.query(queries.updateById, [a_name, a_email,a_phone, a_password,location, active,verified, JSON.stringify(social_links) ,agent_id], (error, result) => {
+               db.query(queries.updateById, [a_name, a_email,a_phone, a_password,stringfyObject(location), active,verified, stringfyObject(social_links) ,agent_id], (error, result) => {
                     if(error){
                          reject(error);
                     }else{

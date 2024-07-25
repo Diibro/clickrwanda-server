@@ -11,7 +11,7 @@ module.exports = {
      getUserViews: "select sum(a.ad_views) as total_views from adverts a inner join users u on a.ad_user_id = u.user_id where u.user_id = ?;",
      getBestViewedUsers: "select u.user_id, u.username, u.full_name, u.profile_image, u.user_phone, u.verified, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join adverts a on u.user_id = a.ad_user_id group by u.user_id having total_ads > 1 order by total_views desc limit ?;",
      getUserAdsTotal: "select count(*) as total_ads from adverts where ad_user_id = ?",
-     getBestSellers: "select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.verified, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id where p.plan_name like '%premium%' or p.plan_name like '%urgent%' or p.plan_name like '%featured%';",
+     getBestSellers: "select u.user_id, u.username, u.full_name,u.profile_image, u.user_phone, u.verified, p.plan_name, sum(a.ad_views) as total_views, count(a.ad_id) as total_ads from users u inner join payment_plan p on u.ad_plan_id = p.plan_id inner join adverts a on u.user_id = a.ad_user_id group by u.user_id order by u.verified desc limit ? offset ?;",
      changePassword: "update users set user_password = ? where user_id = ? ;",
      selectByR_Id: "select u.username, u.user_email, u.reg_date, u.active, count(a.ad_id) as total_ads  from users u left join adverts a on u.user_id = a.ad_user_id where r_id = ? group by u.user_id;",
      countAllUsers: "select count(*) as total from users where user_type = ?;",
