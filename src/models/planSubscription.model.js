@@ -1,5 +1,6 @@
 const {dbConnection: db} = require("../configs/database.config");
 const queries = require("../sql/PlanSubscription");
+const { stringfyObject } = require("../utils/jsonFunctions");
 
 module.exports = {
      findAll: async() => {
@@ -12,7 +13,7 @@ module.exports = {
      },
      save: async(item) => {
           return new Promise((resolve, reject) => {
-               const values = [item.plan_id, item.plan_type, item.amount, item.subscription_date, item.status, item.user_id, item.exp_date, item.r_id, item.payment_id];
+               const values = [item.plan_id, item.plan_type, item.amount, item.subscription_date, item.status, item.user_id, item.exp_date, item.r_id, item.payment_id, stringfyObject(item.ad_ids), item.duration];
                db.query(queries.insertOne, values, (error, data) => {
                     if(error) reject(error);
                     resolve(data);
@@ -21,7 +22,8 @@ module.exports = {
      },
      update: async(item) => {
           return new Promise((resolve,reject) => {
-               const values = [item.status, item.payment_id];
+               console.log(item);
+               const values = [item.status, item.exp_date, stringfyObject(item.ad_ids), item.payment_id];
                db.query(queries.update, values, (error, data) => {
                     if(error) reject(error);
                     resolve(data);
