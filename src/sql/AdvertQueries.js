@@ -174,7 +174,7 @@ module.exports = {
      add: "insert into adverts (ad_id, ad_name, description, ad_image, ad_images, ad_type, ad_user_id, ad_price, sub_category_id,ad_date, contact) values (?,?,?,?,?,?,?,?,?,?,?)",
      search: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, a.contact, a.ad_views, date_format(a.ad_date,'%Y-%m-%d %H:%i:%s') as ad_date, a.status, c.sub_id, c.sub_name, p.plan_name, u.user_id, u.full_name, u.username, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, u.verified, date_format(u.reg_date, '%Y-%m-%d') as reg_date, category.category_id, category.category_name, count(w.v_id) as ad_views from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id inner join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id left join web_views w on a.ad_id = w.v_id where a.ad_id = ? group by a.ad_id;",
      searchAd: "select * from adverts where ad_id = ?",
-     update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, contact = ?, ad_price = ?, ad_discount = ?  where ad_id = ? and ad_user_id = ?;",
+     update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, contact = ?, ad_price = ?, ad_discount = ?  where ad_id = ?;",
      updateAd: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_type = ?, ad_price = ?, sub_category_id = ?,  status = ?,  ad_discount = ?, contact = ?, ad_plan_id = ?, ad_website = ? where ad_id = ?;",
      delete: "delete from adverts where ad_id = ?;",
      addAdView: "update adverts set ad_views = ? where ad_id = ?;",

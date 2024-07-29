@@ -195,8 +195,8 @@ const advertModel = {
                          }
                          const desc = info.description ? info.description : null;
                          const new_desc = JSON.stringify(desc || ad.description);
-                         const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.contact || ad.contact, info.ad_price || ad.ad_price, info.ad_discount || ad.ad_discount, info.ad_id, userId ];
-
+                         const values = [ info.ad_name || ad.ad_name, new_desc, ad_image, other_images, info.ad_type || ad.ad_type, info.contact || ad.contact, info.ad_price || ad.ad_price, info.ad_discount || ad.ad_discount, info.ad_id ];
+                         console.log(values);
                          db.query(queries.update, values, (err) => {
                               if(err) {
                                    return res.json({status: 'fail', message: "failed to update the product", err});
