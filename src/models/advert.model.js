@@ -127,7 +127,15 @@ const advertModel = {
                     if(error) reject(error);
                     else resolve(data);
                })
-          })
+          });
+     },
+     selectApprovedByLocation: async(ops) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectApprovedByLocation, [ops.location, ops.limit, ops.offset],(error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          });
      },
      save: async(ad) => {
           return  new Promise((resolve,reject) => {
@@ -483,6 +491,14 @@ const advertModel = {
                db.query(queries.countNewAds, [date], (error,data) => {
                     if(error) reject(error);
                     else resolve(data[0].total);
+               })
+          })
+     },
+     countByLocation: async(location) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countApprovedByLocation, [location], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data && data.length ? data[0].total : 0);
                })
           })
      }

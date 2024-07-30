@@ -135,5 +135,15 @@ module.exports = {
           }
 
           return {status:"pass", message: "successfully fetched similar ads", data: ads};
+     },
+     getApprovedByLocation:async(ops) => {
+          try {
+               const res = await advertModel.selectApprovedByLocation(ops);
+               const count = await advertModel.countByLocation(ops.location);
+               return {status: 'pass', message: 'Data fetched successfully', data:res,count};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "Server error", dbError: error}
+          }
      }
 }

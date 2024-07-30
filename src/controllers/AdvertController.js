@@ -60,5 +60,10 @@ module.exports = {
           const info = req.body;
           const result = await advertService.getSimilarAds(info);
           return res.json(result);
+     },
+     getAdsByLocation: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getApprovedByLocation(info);
+          return res.json(result);
      }
 }
