@@ -65,5 +65,14 @@ module.exports = {
           const info = req.body;
           const result = await advertService.getApprovedByLocation(info);
           return res.json(result);
+     },
+     getCountsByLocation: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.countByLocation(info);
+          if(result.dbError){
+               return dbErrorHandler(result.dbError, res, 'advert');
+          }else{
+               return res.json(result);
+          }
      }
 }

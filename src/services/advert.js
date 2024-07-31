@@ -145,5 +145,22 @@ module.exports = {
                console.log(error);
                return {status: 'fail', message: "Server error", dbError: error}
           }
+     },
+     countByLocation: async(locations) => {
+          try {
+               if(locations && locations.length){
+                    const newLocations = await Promise.all(locations.map(async location => {
+                         const count = await advertModel.countByLocation(location);
+                         return {name: location, count};
+                    }));
+                    
+                    return {status: 'pass', message: 'Successfully fetched counts by location', data: newLocations};
+               }else{
+                    return {status: 'fail', message: "Invalid information", data: null, }
+               }
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message:"server error", dbError: error};
+          }
      }
 }

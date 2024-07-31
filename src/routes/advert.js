@@ -24,5 +24,6 @@ advertRouter.post('/search-adverts', async (req, res) => await advertModel.searc
 advertRouter.post('/search-user-ad', async (req, res) => await advertModel.searchUserAd(req, res));
 advertRouter.post('/get-similar-ads', async(req,res) => await AdvertController.getSimilarAds(req,res));
 advertRouter.post('/get-by-location', async(req,res) => await AdvertController.getAdsByLocation(req,res));
+advertRouter.post('/get-counts-by-location', async(req,res) => await AdvertController.getCountsByLocation(req,res));
 module.exports = advertRouter;
 
