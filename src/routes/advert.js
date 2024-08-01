@@ -17,6 +17,8 @@ advertRouter.post('/5',authenticateUser, async (req, res) => await advertModel.d
 //customized routes
 
 advertRouter.post('/search-category', async (req, res) => await advertModel.getCategorized(req, res));
+advertRouter.post('/get-by-category', AdvertController.getApprovedAdsByCategory);
+advertRouter.post('/get-by-sub-category', AdvertController.getApprovedAdsBySubCategory);
 advertRouter.post('/search-sub-category', async (req,res) => await advertModel.getSubCategoryAds(req, res));
 advertRouter.get('/get-user-adverts', authenticateUser, async (req, res) => await advertModel.getUserAds(req, res));
 advertRouter.post('/get-user-ads', async (req, res) => await advertModel.searchUserAds(req, res));

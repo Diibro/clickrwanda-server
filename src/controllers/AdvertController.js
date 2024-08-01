@@ -74,5 +74,23 @@ module.exports = {
           }else{
                return res.json(result);
           }
+     },
+     getApprovedAdsByCategory: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getApprovedAdsByCategory(info);
+          if(result.dbError){
+               return dbErrorHandler(result.dbError, res, 'advert');
+          }else{
+               return res.json(result);
+          }
+     },
+     getApprovedAdsBySubCategory: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getApprovedAdsBySubCategory(info);
+          if(result.dbError){
+               return dbErrorHandler(result.dbError, res, 'advert');
+          }else{
+               return res.json(result);
+          }
      }
 }

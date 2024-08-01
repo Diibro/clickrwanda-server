@@ -162,5 +162,23 @@ module.exports = {
                console.log(error);
                return {status: 'fail', message:"server error", dbError: error};
           }
+     },
+     getApprovedAdsByCategory: async(ops) => {
+          try {
+               const res = await advertModel.selectApprovedCategoryAds(ops);
+               return {status: 'pass', message: 'successfully fetched category ads', data: res};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "server error", dbError: error};
+          }
+     },
+     getApprovedAdsBySubCategory: async(ops) => {
+          try {
+               const res = await advertModel.selectApprovedSubCategoryAds(ops);
+               return {status: 'pass', message: 'successfully fetched sub-category ads', data: res};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "server error", dbError: error};
+          }
      }
 }
