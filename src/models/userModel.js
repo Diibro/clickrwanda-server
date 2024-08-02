@@ -12,7 +12,7 @@ const queries = require("../sql/UserQueries");
 const { comparePassword, hashPassword } = require('../utils/hashFunctions');
 const { stringfyObject } = require('../utils/jsonFunctions');
 
-const unknownImage = 'https://res.cloudinary.com/dyjahjf1p/image/upload/v1700982042/clickrwanda/logos/account_msinv8.png';
+const unknownImage = 'https://s3.eu-north-1.amazonaws.com/clickrwanda.s3.com/logos/account.png';
 
 module.exports  = {
      selectAll: async () => {
