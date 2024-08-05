@@ -1,7 +1,8 @@
 const advertModel = require("../models/advert.model");
 const webViewModel = require("../models/WebView.model");
 const {v4: uuidv4} = require('uuid');
-const {getIo} = require('../configs/socket-io')
+const {getIo} = require('../configs/socket-io');
+const commissionAdsModel = require('../models/CommissionAds');
 
 
 module.exports = {
@@ -104,10 +105,11 @@ module.exports = {
           try {
                ad.ad_id = uuidv4();
                const res = await advertModel.save(ad);
-               const io = getIo();
-               if(io) io.emit('new-advert', ad);
-               else console.log('io not defined')
-               return {status: "pass", message: "Successfully added the advert", data: res};
+               let commissionRes = null;
+               if(ad.commission) {
+                    commissionRes = await commissionAdsModel.add({ad_id:ad.ad_id, user_id: ad.user_id, r_id: ad.r_id, registration_date: ad.registrationDate, commission: ad.commission });
+               }
+               return {status: "pass", message: "Successfully added the advert", data: res, extraData: commissionRes};
           } catch (error) {
                return {status: "fail", message:"Error adding the advert", dbError: error, data:null}
           }
@@ -179,6 +181,53 @@ module.exports = {
           } catch (error) {
                console.log(error);
                return {status: 'fail', message: "server error", dbError: error};
+          }
+     },
+     getAdminAdverts: async(type) => {
+          let res = null;
+          try {
+               switch(type){
+                    case 'approved-ads':
+                         res = await advertModel.getApprovedAds();
+                         break
+                    case 'pending-ads':
+                         res = await advertModel.getPendingAds();
+                         break;
+                    case 'approved-commission-ads':
+                         res = await advertModel.getApprovedCommissionAds();
+                         break;
+                    case 'pending-commission-ads':
+                         res = await advertModel.getPendingCommissionAds();
+                         break;
+                    case 'rejected-ads':
+                         res = await advertModel.getRejectAds();
+                         break;
+                    default:
+                         () => {} 
+
+               }
+               if(res){
+                    return {status: 'pass', message: 'success fetching adverts', data:res}
+               }else{
+                    return {fail: 'fail', message: 'fail to fetch adverts', data:null}
+               }
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "server error", dbError: error};
+          }
+     },
+     getClientApprovedCommissionAds: async(ops) => {
+          try {
+               if(ops){
+                    const res = await advertModel.getClientApprovedCommissionAds(ops);
+                    return {status: "pass", message: 'Success fetching ads', data: res}
+               }else{
+                    return {status: 'fail', message: 'invalid inputs', data:null}
+               }
+               
+          } catch (error) {
+               console.log(error)
+               return {status: 'fail', message: 'server error', dbError: error}
           }
      }
 }

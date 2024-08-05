@@ -92,5 +92,14 @@ module.exports = {
           }else{
                return res.json(result);
           }
+     },
+     getClientApprovedCommissionAds: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getClientApprovedCommissionAds();
+          if(result.dbError){
+               return dbErrorHandler(result.dbError, res,'adverts')
+          }else{
+               return res.json(result);
+          }
      }
 }

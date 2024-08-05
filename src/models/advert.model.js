@@ -501,7 +501,56 @@ const advertModel = {
                     else resolve(data && data.length ? data[0].total : 0);
                })
           })
-     }
+     },
+     getApprovedAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectApprovedAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getPendingAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectPendingAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getPendingCommissionAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectPendingCommissionAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getApprovedCommissionAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectApprovedCommissionAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getRejectAds: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectRejectedAds, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     },
+     getClientApprovedCommissionAds:async(ops) => {
+          return new Promise((resolve,reject) => {
+               console.log(ops);
+               db.query(queries.selectClientApprovedCommissionAds, [ops.limit,ops.offset], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
+     } 
 };
 
 module.exports = advertModel;
