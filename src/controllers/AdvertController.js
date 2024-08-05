@@ -95,7 +95,7 @@ module.exports = {
      },
      getClientApprovedCommissionAds: async(req,res) => {
           const info = req.body;
-          const result = await advertService.getClientApprovedCommissionAds();
+          const result = await advertService.getClientApprovedCommissionAds(info);
           if(result.dbError){
                return dbErrorHandler(result.dbError, res,'adverts')
           }else{
