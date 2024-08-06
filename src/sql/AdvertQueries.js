@@ -184,7 +184,8 @@ module.exports = {
      searchAd: "select * from adverts where ad_id = ?",
      update: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_images = ?, ad_type = ?, contact = ?, ad_price = ?, ad_discount = ?  where ad_id = ?;",
      updateAd: "update adverts set ad_name = ?, description = ?, ad_image = ?, ad_type = ?, ad_price = ?, sub_category_id = ?,  status = ?,  ad_discount = ?, contact = ?, ad_plan_id = ?, ad_website = ? where ad_id = ?;",
-     delete: "delete from adverts where ad_id = ?;",
+     // delete: "delete from adverts where ad_id = ?;",
+     delete: "update adverts set status = 'rejected' where ad_id = ?;",
      addAdView: "update adverts set ad_views = ? where ad_id = ?;",
      addAdDiscount: "update adverts set ad_discount = ? where ad_id = ?;",
 
