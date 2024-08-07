@@ -3,6 +3,7 @@ const categoryModel = require("../models/category.model");
 const agentModel = require("../models/agent.model");
 const userModel = require("../models/userModel");
 const CommissionAdModel = require('../models/CommissionAds');
+const CommissionAdsClientModel = require('../models/CommissionAdsClients.model');
 
 module.exports = {
      countAll: async(ops) => {
@@ -21,6 +22,8 @@ module.exports = {
                data.newInfluencers = await agentModel.countNewAgents('influencer', ops.newDate);
                data.newCommissionAds = await CommissionAdModel.countNew(ops.newDate);
                data.totalCommissionAds = await CommissionAdModel.countAll();
+               data.totalCommissionAdsClients = await CommissionAdsClientModel.countAll();
+               data.newCommissionAdsClients  = await CommissionAdsClientModel.countNew(ops.newDate);
                return {status: 'pass', message: "data fetched successfully", data}
           } catch (error) {
                console.log(error);
