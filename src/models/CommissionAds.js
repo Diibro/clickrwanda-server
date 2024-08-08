@@ -26,5 +26,21 @@ module.exports = {
                     else resolve(data[0].total);
                })
           })
+     },
+     countByAgent: async(r_id) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countByAgent, [r_id], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
+     findByAgent:async(r_id) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.findByAgent,[r_id], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
      }
 }

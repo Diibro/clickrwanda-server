@@ -3,7 +3,7 @@ const { comparePassword, hashPassword } = require("../utils/hashFunctions");
 const salt ="$2a$12$abcdefghijklmnopqrstuu";
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const commissionAdsModel = require('../models/CommissionAds');
 module.exports = {
      addAgent: async (agent) => {
           try {
@@ -31,8 +31,8 @@ module.exports = {
                          if(exisitingAgent.active){
                               const match = await comparePassword(agent.a_password, exisitingAgent.a_password);
                               if(match){
-                                   const {a_email} = exisitingAgent;
-                                   const token = jwt.sign({a_email}, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
+                                   const {agent_id:userId} = exisitingAgent;
+                                   const token = jwt.sign({userId}, process.env.JWT_SECRET_KEY, { expiresIn: '2h' });
                                    return {status:"success", message:"login successful", data: exisitingAgent, agentToken: token };
                               }else{
                                    return {status: "fail", message:"invalid password", data: null};
@@ -105,5 +105,24 @@ module.exports = {
                console.log(error);
                return {status: 'fail', message: 'database error', dbError: error}
           }
-     }
+     },
+     getCounts: async(ops) => {
+          try {
+               const counts = {};
+               counts.commissionAdsCount = await commissionAdsModel.countByAgent(ops.agent_id);
+               return {status: 'pass', message: 'successfully fetched the agent counts', data: counts};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "error fetching info", dbError: error}
+          }
+     },
+     getCommissionProductsByAgent: async(r_id) => {
+          try {
+               const res = await commissionAdsModel.findByAgent(r_id);
+               return {status: 'pass', message: 'data fetched successfully', data:res};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "error fetching info", dbError: error}
+          }
+     } 
 }

@@ -104,6 +104,9 @@ module.exports = {
      save: async(ad) => {
           try {
                ad.ad_id = uuidv4();
+               if(ad.commission && ad.user_id && ad.user_id.startsWith('agent_')){
+                    ad.user_id = '9b2e0273-abb5-4d11-bdda-19f64fa3ce82';
+               }
                const res = await advertModel.save(ad);
                let commissionRes = null;
                if(ad.commission) {

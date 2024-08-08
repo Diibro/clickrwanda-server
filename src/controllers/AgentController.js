@@ -41,5 +41,17 @@ module.exports = {
           }else{
                return res.json(result);
           }
+     },
+     getCounts: async(req,res) => {
+          const info = req.body;
+          const result = await agentService.getCounts(info);
+          if(result.dbError) return dbErrorHandler(result.dbError, res,'agent');
+          else return res.json(result);
+     },
+     getCommissionAdsByAgent: async(req,res) => {
+          const {r_id} = req.query;
+          const result = await agentService.getCommissionProductsByAgent(r_id);
+          if(result.dbError) return dbErrorHandler(result.dbError, res,'agent');
+          else return res.json(result);
      }
 }
