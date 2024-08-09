@@ -78,14 +78,8 @@ const categoryModel = {
                          return res.json({status: "fail", message: "server error",err})
                     }
                     if(data[0]){
-                         let imageUrl = data[0].category_icon;
-                         if(req.file){
-                              let imageUploaded = await uploadImage(req.file.path, folders.categories);
-                              if(imageUploaded.status){
-                                   imageUrl = imageUploaded.image;
-                              }
-                         }
-                         const values = [info.category_name || data[0].category_name, imageUrl, info.category_rank || data[0].category_rank, info.category_id];
+                         
+                         const values = [info.category_name || data[0].category_name, info.category_icon || data[0].category_icon, info.category_rank || data[0].category_rank, info.category_id];
                          db.query(queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});
