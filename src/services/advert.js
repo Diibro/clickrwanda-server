@@ -92,7 +92,8 @@ module.exports = {
                     const totalAds = await advertModel.countShopAds(res.user_id);
                     const totalShopVisits = await webViewModel.countShopVisits(res.user_id);
                     const totalShopAdVisits = await webViewModel.countShopAdVisits(res.user_id);
-                    return {status:"pass", message: "success fetching advert information", data: res, extraData: {totalAds, visits: totalShopAdVisits + totalShopVisits}}
+                    const adImpressions = await webViewModel.countAdImpression(res.ad_date);
+                    return {status:"pass", message: "success fetching advert information", data: res, extraData: {totalAds, visits: totalShopAdVisits + totalShopVisits + adImpressions}}
                }else{
                     return {status: 'fail', message: "No advert data found", data:null}
                }
@@ -230,6 +231,23 @@ module.exports = {
                
           } catch (error) {
                console.log(error)
+               return {status: 'fail', message: 'server error', dbError: error}
+          }
+     },
+     getCommissionAdsByCategory: async(ops) => {
+          try {
+               if(ops.subCategories && ops.subCategories.length){
+                    const data = await Promise.all(ops.subCategories.map(async subCategory => {
+                         const ads = await commissionAdsModel.findBySubCategory({limit: ops.limit, offset:ops.offset, sub_id: subCategory.id});
+                         subCategory.ads = ads;
+                         return subCategory;
+                    }));
+                    return {status: 'pass', message: "successfully fetched sub category commission ads", data};
+               }else{
+                    return {status: 'fail', message: 'Error fetching the commission ads'}
+               }
+          } catch (error) {
+               console.log(error);
                return {status: 'fail', message: 'server error', dbError: error}
           }
      }

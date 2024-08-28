@@ -372,14 +372,14 @@ const advertModel = {
                await Promise.all([
                     new Promise((resolve) => {
                          db.query(subCategoryQueries.categorySearch, [info.category_id], (catError, catData) => {
-                              if(catError) return dbErrorHandler(catError, res, 'sub category');
+                              if(catError) console.log(catError);
                               categoryInfo.subCategories = catData;
                               resolve();
                          })
                     }),
                     new Promise((resolve) => {
                          db.query(categoryQueries.searchQuery, [category_id], (err, data) => {
-                              if(err) return dbErrorHandler(err, res, 'category');
+                              if(err) console.log(err);
                               categoryInfo.categoryData = data[0];
                               resolve();
                          })
@@ -387,7 +387,7 @@ const advertModel = {
                ]);
                db.query(queries.getCategory, [category_id], (err, result) => {
                     if(err){
-                         return dbErrorHandler(err);
+                         console.log(err);
                     }
                     categoryInfo.adverts = result;
 

@@ -101,5 +101,11 @@ module.exports = {
           }else{
                return res.json(result);
           }
+     },
+     getCommissionAdsByCategory: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getCommissionAdsByCategory(info);
+          if(result.dbError) return dbErrorHandler(result.dbError, res, 'commission ads');
+          else return res.json(result);
      }
 }

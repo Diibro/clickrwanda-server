@@ -83,5 +83,13 @@ module.exports = {
                     else resolve(data[0].total || 0);
                })
           })
+     },
+     countAdImpression: async(date) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.countAdImpressions, [date], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total || 0);
+               })
+          })
      } 
 }
