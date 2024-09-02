@@ -10,7 +10,8 @@ advertRouter.post('/all-approved', async(req,res) => AdvertController.findCatego
 advertRouter.post('/1',  async (req, res) => await advertModel.findAll(req, res));
 advertRouter.post('/2',authenticateUser, async (req, res) => await AdvertController.save(req, res));
 advertRouter.post('/3',authenticateUser, advertMultiUpload, async(req, res) => await advertModel.update(req, res));
-advertRouter.post('/update-ad', authenticateUser, async(req,res) => await AdvertController.update(req,res));
+// advertRouter.post('/update-ad', authenticateUser, async(req,res) => await AdvertController.update(req,res));
+advertRouter.post('/update-ad', async(req,res) => await AdvertController.update(req,res));
 advertRouter.post('/4', async (req, res) => await AdvertController.search(req, res));
 advertRouter.post('/5',authenticateUser, async (req, res) => await advertModel.delete(req, res));
 

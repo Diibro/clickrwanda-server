@@ -51,6 +51,16 @@ module.exports = {
                console.log(err);
                return res.json({status:"fail", message: "server error"});
           }
+     },
+     getCounts: async(req,res) => {
+          try {
+               const ops = req.body;
+          const result = await webViewService.getCounts(ops);
+          return res.json(result);
+          } catch (error) {
+               console.log(err);
+               return res.json({status:"fail", message: "server error"});
+          }
      }
 
 }

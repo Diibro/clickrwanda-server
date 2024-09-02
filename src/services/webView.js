@@ -39,5 +39,18 @@ module.exports = {
           } catch (error) {
                return {status: "fail", data: null, error}
           }
+     },
+     getCounts: async(ops) => {
+          try {
+               const data = await Promise.all(
+                    ops.map(async op => {
+                         const visits = await webViewModel.countFromDate(op.date);
+                         return {name: op.name, visits, date: op.date};
+                    })
+               );
+               return {status: 'pass', data};
+          } catch (error) {
+               return {status: 'fail', data: null, error};
+          }
      }
 }
