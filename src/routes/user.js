@@ -7,11 +7,11 @@ const userController = require("../controllers/UserController");
 
 userRouter.get('/1', async (req,res) => await userController.findAll(req, res));
 userRouter.post('/2',async (req,res) => await userController.register(req, res));
-userRouter.post('/3', authenticateUser, logoUpload,async (req,res) => await userController.updateUser(req, res));
-userRouter.get('/4', authenticateUser, async (req,res) => await userController.searchUser(req, res));
-userRouter.delete('/5', authenticateUser, async (req,res) => await userModel.deleteUser(req, res));
-userRouter.post('/get-ref', authenticateUser, async(req,res) => await userController.findByRef(req,res));
-userRouter.post('/get-user-dash-info', authenticateUser,async(req,res) => await userController.getUserDashInfo(req,res));
+userRouter.post('/3', logoUpload,async (req,res) => await userController.updateUser(req, res));
+userRouter.get('/4',  async (req,res) => await userController.searchUser(req, res));
+userRouter.delete('/5',  async (req,res) => await userModel.deleteUser(req, res));
+userRouter.post('/get-ref', async(req,res) => await userController.findByRef(req,res));
+userRouter.post('/get-user-dash-info',async(req,res) => await userController.getUserDashInfo(req,res));
 //user authentication routes
 
 userRouter.post('/login', async (req,res) => await userController.login(req, res));

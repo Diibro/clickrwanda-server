@@ -13,7 +13,8 @@ advertRouter.post('/3',authenticateUser, advertMultiUpload, async(req, res) => a
 // advertRouter.post('/update-ad', authenticateUser, async(req,res) => await AdvertController.update(req,res));
 advertRouter.post('/update-ad', async(req,res) => await AdvertController.update(req,res));
 advertRouter.post('/4', async (req, res) => await AdvertController.search(req, res));
-advertRouter.post('/5',authenticateUser, async (req, res) => await advertModel.delete(req, res));
+// advertRouter.post('/5',authenticateUser, async (req, res) => await advertModel.delete(req, res));
+advertRouter.post('/5',async (req, res) => await advertModel.delete(req, res));
 
 //customized routes
 
