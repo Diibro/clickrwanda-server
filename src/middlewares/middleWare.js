@@ -12,7 +12,6 @@ const middleWares = (app) => {
      app.set('trust proxy', true);
      app.use((req, res, next) => {
           const apiKey = req.headers['x-api-key'];
-          
           console.log('the api is',apiKey, "from ", req.headers.origin);
           if (apiKey === secretKey) {
                next(); 
