@@ -11,6 +11,7 @@ const middleWares = (app) => {
      app.use(corsMiddleWare());
      app.use((req, res, next) => {
           const apiKey = req.headers['x-api-key'];
+          if(req.origin === "https:.//share.clickrwanda.com") return next();
           console.log('the api is',apiKey, "from ", req.headers.origin);
           if (apiKey === secretKey) {
                next(); 
