@@ -9,17 +9,18 @@ const secretKey = process.env.SERVER_API_KEY;
 
 const middleWares = (app) => {
      app.use(corsMiddleWare());
+     app.set('trust proxy', true);
      app.use((req, res, next) => {
           const apiKey = req.headers['x-api-key'];
-          if(req.origin === "https://share.clickrwanda.com") return next();
+          
           console.log('the api is',apiKey, "from ", req.headers.origin);
           if (apiKey === secretKey) {
                next(); 
           } else {
                res.status(403).json({ error: 'Unauthorized access' });
           }
+          
      });
-     app.set('trust proxy', true);
      app.use(compression());
      app.use(checkPayloadSize);
      app.use(cookieParser());
