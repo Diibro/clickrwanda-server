@@ -11,7 +11,7 @@ const middleWares = (app) => {
      app.use(corsMiddleWare());
      app.use((req, res, next) => {
           const apiKey = req.headers['x-api-key'];
-          console.log('the api is',apiKey);
+          console.log('the api is',apiKey, "from ", req.headers.origin);
           if (apiKey === secretKey) {
                next(); 
           } else {
