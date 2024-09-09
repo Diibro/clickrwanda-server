@@ -18,7 +18,7 @@ const corsMiddleWare = () => {
   return cors({
     origin: acceptedUrls,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
     credentials: true,
     optionsSuccessStatus: 200
   });

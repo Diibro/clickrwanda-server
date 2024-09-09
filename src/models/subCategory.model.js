@@ -3,7 +3,8 @@ const {v4: uuidv4} = require('uuid');
 const  dbErrorHandler = require('../middlewares/dbError');
 //const imageUrl = "http://localhost:3000/public/images/sample.png";
 
-const queries = require("../sql/SubCategoryQueries")
+const queries = require("../sql/SubCategoryQueries");
+const { stringfyObject } = require('../utils/jsonFunctions');
 const subCategoryModel = {
      name: "sub category",
      
@@ -84,7 +85,7 @@ const subCategoryModel = {
                          return  dbErrorHandler(err, res, subCategoryModel.name);
                     }
                     if(data[0]){
-                         const values = [info.sub_name, info.sub_id];
+                         const values = [info.sub_name, stringfyObject(info.fields), info.sub_id];
                          db.query(queries.updateQuery, values , (err) => {
                               if (err){
                                    return res.json({status: "failed", message: "failed to update the category!", err});

@@ -104,6 +104,7 @@ module.exports = {
      },
      save: async(ad) => {
           try {
+               console.log(ad);
                ad.ad_id = uuidv4();
                if(ad.commission && ad.user_id && ad.user_id.startsWith('agent_')){
                     ad.user_id = 'f6f2d43f-dd46-4ae3-86dc-fafcd9a3b452';
