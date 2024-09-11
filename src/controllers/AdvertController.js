@@ -107,5 +107,15 @@ module.exports = {
           const result = await advertService.getCommissionAdsByCategory(info);
           if(result.dbError) return dbErrorHandler(result.dbError, res, 'commission ads');
           else return res.json(result);
+     },
+     getApprovedAdsByCategory: async(req,res) => {
+          const info = req.body;
+          if(info){
+               const result = await advertService.getApprovedAdsByCategory(info);
+               if(result.dbError) return dbErrorHandler(result.dbError, res, 'commission ads');
+               else return res.json(result);
+          }else{
+               return res.json({status: 'fail', message: 'invalid information', data: null});
+          }
      }
 }

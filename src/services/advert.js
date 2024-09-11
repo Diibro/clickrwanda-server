@@ -251,5 +251,15 @@ module.exports = {
                console.log(error);
                return {status: 'fail', message: 'server error', dbError: error}
           }
+     },
+     getApprovedAdsByCategory: async(ops ) => {
+          try {
+               const res = await advertModel.getApprovedAdsByCategory(ops);
+               return {status: 'pass', message: 'Successfully fetched ads', data: res};
+          } catch (error) {
+               console.log(error);
+               return {status: 'fail', message: "server error", dbError: error}
+          }
+
      }
 }

@@ -544,13 +544,20 @@ const advertModel = {
      },
      getClientApprovedCommissionAds:async(ops) => {
           return new Promise((resolve,reject) => {
-               console.log(ops);
                db.query(queries.selectClientApprovedCommissionAds, [ops.limit,ops.offset], (error,data) => {
                     if(error) reject(error);
                     else resolve(data);
                })
           })
-     } 
+     } ,
+     getApprovedAdsByCategory: async(ops) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.selectApprovedAdsByCategory, [ops.ids, ops.limit,ops.offset], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               } )
+          })
+     }
 };
 
 module.exports = advertModel;
