@@ -551,6 +551,14 @@ const advertModel = {
           })
      } ,
      getApprovedAdsByCategory: async(ops) => {
+          if(ops.commission){
+               return new Promise((resolve,reject) => {
+                    db.query(queries.selectApprovedCommissionAdsByCategory, [ops.ids, ops.limit,ops.offset], (error,data) => {
+                         if(error) reject(error);
+                         else resolve(data);
+                    } )
+               })
+          }
           return new Promise((resolve,reject) => {
                db.query(queries.selectApprovedAdsByCategory, [ops.ids, ops.limit,ops.offset], (error,data) => {
                     if(error) reject(error);
