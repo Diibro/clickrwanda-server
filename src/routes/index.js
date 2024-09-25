@@ -16,6 +16,7 @@ const PlanSubscriptionRouter = require('./planSubscription');
 const AgentTaskRouter = require('./agentTask');
 const AdminRouter = require('./admin');
 const CommissionAdsClientsRouter = require('./CommissionAdsClients');
+const BlogRouter = require('./Blog');
 
 mainRouter.use('/users', userRouter);
 mainRouter.use('/category', categoryRouter);
@@ -32,6 +33,7 @@ mainRouter.use('/plan-subscription', PlanSubscriptionRouter)
 mainRouter.use('/agent-task', AgentTaskRouter);
 mainRouter.use('/commission-ads-clients', CommissionAdsClientsRouter);
 mainRouter.use('/admin', AdminRouter);
+mainRouter.use('/blog', BlogRouter);
 mainRouter.get('/', (req, res) => {
      res.json({Status: "pass", message: "Server is up and running"});
 });
