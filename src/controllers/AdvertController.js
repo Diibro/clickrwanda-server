@@ -117,5 +117,10 @@ module.exports = {
           }else{
                return res.json({status: 'fail', message: 'invalid information', data: null});
           }
+     },
+     getShopAds: async(req,res) => {
+          const info = req.body;
+          const result = await advertService.getShopAds(info);
+          return res.json(result);
      }
 }

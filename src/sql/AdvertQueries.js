@@ -190,5 +190,6 @@ module.exports = {
      delete: "update adverts set status = 'rejected' where ad_id = ?;",
      addAdView: "update adverts set ad_views = ? where ad_id = ?;",
      addAdDiscount: "update adverts set ad_discount = ? where ad_id = ?;",
+     selectSpecialShop: "select a.ad_id, a.ad_name, a.description, a.ad_image, a.ad_images, a.ad_type, a.ad_price, date_format(a.ad_date,'%Y-%m-%d %H:%i:%s') as ad_date, a.status, a.contact, a.ad_discount, c.sub_id, c.sub_name, p.plan_name, u.full_name,u.user_id, u.username, u.user_location, u.profile_image,u.user_phone, u.user_email, u.rating, u.verified, a.ad_website as website, category.category_name, category.category_id, count(w.v_id) as ad_views, ca.commission from adverts a inner join users u on a.ad_user_id = u.user_id inner join sub_category c on a.sub_category_id = c.sub_id left join payment_plan p on a.ad_plan_id = p.plan_id inner join category  on c.parent_id = category.category_id left join web_views w on a.ad_id = w.v_id left join commission_ads ca on a.ad_id = ca.ad_id where u.active is true and a.status = 'Approved' and c.sub_id in (?) and u.user_id in (?) group by a.ad_id order by a.ad_date desc, ca.commission desc limit ? offset ?;"
 
 }

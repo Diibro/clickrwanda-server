@@ -565,6 +565,15 @@ const advertModel = {
                     else resolve(data);
                } )
           })
+     },
+     getSpecial: async(ops) => {
+          return new Promise((resolve,reject) => {
+               const values = [ops.subIds, ops.userIds, ops.limit, ops.offset];
+               db.query(queries.selectSpecialShop, values, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data);
+               })
+          })
      }
 };
 

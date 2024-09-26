@@ -261,5 +261,14 @@ module.exports = {
                return {status: 'fail', message: "server error", dbError: error}
           }
 
+     },
+     getShopAds: async(ops) => {
+          try {
+               const res = await advertModel.getSpecial(ops);
+               return {status: "pass", data: res}
+          } catch (error) {
+               console.log(error);
+               return {status: "fail", message: "server error"}
+          }
      }
 }

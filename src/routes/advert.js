@@ -32,5 +32,6 @@ advertRouter.post('/get-counts-by-location', async(req,res) => await AdvertContr
 advertRouter.post('/get-client-approved-commission-ads', AdvertController.getClientApprovedCommissionAds);
 advertRouter.post('/get-commission-ads-by-category', AdvertController.getCommissionAdsByCategory);
 advertRouter.post('/get-approved-ads-by-category', AdvertController.getApprovedAdsByCategory);
+advertRouter.post('/get-special-shop-ads', AdvertController.getShopAds);
 module.exports = advertRouter;
 
