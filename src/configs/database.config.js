@@ -17,7 +17,12 @@ class Database {
 }
 const connectionOptions = () => {
      let options = {};
-     if(process.env.NODE_ENV === "production"){
+     if (process.env.MYSQL_URL) {
+          // Use MYSQL_URL provided by Railway
+          options = {
+              uri: process.env.MYSQL_URL,  // Add the uri for MySQL connection string
+          };
+     }else if(process.env.NODE_ENV === "production"){
           options = {
                host: process.env.HOST,
                port: process.env.DB_PORT,
