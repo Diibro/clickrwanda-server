@@ -19,7 +19,7 @@ const payPlanModel = {
      },
      update: async(plan) => {
           return new Promise ((resolve, reject) => {
-               const values = [plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.plan_type, plan.location, plan.plan_icon,plan.plan_id, plan.active];
+               const values = [plan.plan_name, plan.plan_amount, stringfyObject(plan.description), plan.plan_type, plan.location, plan.plan_icon,plan.active,plan.plan_id];
                db.query(queries.updateById, values, (error, result) => {
                     if(error) reject(error);
                     else resolve(result);
