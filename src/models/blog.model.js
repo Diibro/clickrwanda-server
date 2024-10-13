@@ -51,5 +51,13 @@ module.exports = {
                     else resolve(data);
                })
           })
+     },
+     countAll: async() => {
+          return new Promise((resolve,reject) => {
+               db.query(BlogQeuries.countAll, (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
      }
 }
