@@ -14,7 +14,8 @@ module.exports = {
           }else if(queries.category){
                result = await BlogService.getByCategory(queries.category);
           }else{
-               result = await BlogService.getAll(queries?.ops || {limit:100, offset:0})
+               const [limit, offset] = [+req.query.limit || 50, +req.query.offset || 0];
+               result = await BlogService.getAll(queries?.ops || {limit, offset});
           }
           
           return res.json(result)
