@@ -31,7 +31,7 @@ module.exports = {
           try {
                const res = await Blog.findOne(id);
                if(res) {
-                    return {status: "pass", message: "sucess fetching blog info", data: res}
+                    return {status: "pass", message: "sucess fetching blog info", data: res[0]}
                }else {
                     return {status: 'fail', message: "blog not found"}
                }
