@@ -385,7 +385,8 @@ const advertModel = {
                          })
                     })
                ]);
-               db.query(queries.getCategory, [category_id], (err, result) => {
+               db.query(queries.selectApprovedAdsByCategory, [[category_id], 100, 0], (err, result) => {
+                    console.log(queries.selectApprovedAdsByCategory);
                     if(err){
                          console.log(err);
                     }
