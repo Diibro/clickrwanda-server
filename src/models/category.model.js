@@ -55,7 +55,6 @@ const categoryModel = {
      searchCategory: async (req, res) => {
           try {
                const info = req.body;
-               console.log(info);
                db.query(queries.searchQuery, [info.category_id], (err, data) => {
                     if(err){
                          return res.json({status: "search fail", message: "invalid info"});
