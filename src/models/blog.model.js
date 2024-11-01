@@ -38,7 +38,7 @@ module.exports = {
      },
      findByCategory: async(category) => {
           return new Promise((resolve, reject) => {
-               db.query(BlogQeuries.selectByCategory, [category], (error,data) => {
+               db.query(BlogQeuries.selectByCategory, [category.split('-').join(' ')], (error,data) => {
                     if(error) reject(error);
                     else resolve(data);
                })
