@@ -12,20 +12,21 @@ const corsMiddleWare = () => {
     'https://www.clickrwanda.com',
     'https://clickrwanda-client.vercel.app/',
     "https://share.clickrwanda.com",
-    "https://dashboard.clickrwanda.com"
+    "https://dashboard.clickrwanda.com",
+    "http://192.168.1.66:5173",
+    "http://192.168.1.71:5173",
+    "https://staff.clickrwanda.com"
   ];
 
-  return cors({
+  return cors(
+    {
     origin: acceptedUrls,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
     credentials: true,
     optionsSuccessStatus: 200
-  });
-
-
-  
-  
+    }
+);
 
 
 };
