@@ -7,7 +7,6 @@ module.exports = {
      },
      get: async(req,res) => {
           const queries = req.query;
-          console.log(queries);
           let result = null
           if(queries.id) {
                result = await BlogService.search(queries.id);

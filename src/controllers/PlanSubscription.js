@@ -9,6 +9,7 @@ module.exports = {
           return res.json(result);
      },
      update: async(req,res) => {
+          console.log("updating plan subscription");
           const info = req.body;
           const result = await services.update(info);
           if(result.dbError) return dbErrorHandler(result.dbError, res, "Subscription");

@@ -19,6 +19,7 @@ const middleWares = (app) => {
           }
           
      });
+     console.log("has auth key");
      app.use(compression());
      app.use(checkPayloadSize);
      app.use(cookieParser());
