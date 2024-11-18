@@ -26,6 +26,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Cleanup
+    - run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf node_modules
+          sudo apt-get clean
     - run: npm ci
     - run: |
         touch .env
