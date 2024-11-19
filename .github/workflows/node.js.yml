@@ -27,10 +27,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
-          sudo rm -rf /tmp/*
           sudo rm -rf node_modules
           sudo apt-get clean
-    - run: npm i
+    - run: npm ci --quiet
     - run: |
         touch .env
         echo "${{ secrets.PROD_ENV_FILE }}" | sed 's/\\n/\n/g' > .env
