@@ -26,6 +26,6 @@ jobs:
           cd ~/clickrwanda-server
           git pull
           npm install
-          pm2 restart all || pm2 start index.js --name "your-app"
+          pm2 restart all || pm2 start index.js --name clickrwanda-server
         EOF
         
