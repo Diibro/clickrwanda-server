@@ -1,3 +1,0 @@
-const addParam = (param) => {
-     
-}
