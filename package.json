@@ -1,0 +1,49 @@
+{
+  "name": "clickrwanda-server",
+  "version": "1.0.0",
+  "description": "clickrwanda express server",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "stopServer": "forever stop index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "clickrwanda",
+    "search anything in rwanda"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1651.0",
+    "bcrypt": "^5.1.1",
+    "clickrwanda-server": "file:",
+    "cloudinary": "^1.41.0",
+    "cloudinary-build-url": "^0.2.4",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "flatted": "^3.3.1",
+    "fs": "^0.0.1-security",
+    "ip2location-io-nodejs": "^1.0.4",
+    "ip2location-nodejs": "^9.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.3",
+    "nodemailer": "^6.9.8",
+    "path": "^0.12.7",
+    "socket.io": "^4.7.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
