@@ -173,7 +173,8 @@ module.exports = {
      getApprovedAdsByCategory: async(ops) => {
           try {
                const res = await advertModel.selectApprovedCategoryAds(ops);
-               return {status: 'pass', message: 'successfully fetched category ads', data: res};
+               const count = await advertModel.countApprovedCategoryAds(ops);
+               return {status: 'pass', message: 'successfully fetched category ads', data: res, pagination: {total: count}};
           } catch (error) {
                console.log(error);
                return {status: 'fail', message: "server error", dbError: error};
@@ -182,7 +183,8 @@ module.exports = {
      getApprovedAdsBySubCategory: async(ops) => {
           try {
                const res = await advertModel.selectApprovedSubCategoryAds(ops);
-               return {status: 'pass', message: 'successfully fetched sub-category ads', data: res};
+               const count = await advertModel.countApprovedSubCategoryAds(ops);
+               return {status: 'pass', message: 'successfully fetched sub-category ads', data: res, pagination: {total: count}};
           } catch (error) {
                console.log(error);
                return {status: 'fail', message: "server error", dbError: error};
@@ -255,7 +257,8 @@ module.exports = {
      getApprovedAdsByCategory: async(ops ) => {
           try {
                const res = await advertModel.getApprovedAdsByCategory(ops);
-               return {status: 'pass', message: 'Successfully fetched ads', data: res};
+               const count = await advertModel.countApprovedAdsByCategory(ops);
+               return {status: 'pass', message: 'Successfully fetched ads', data: res, pagination: {total: count}};
           } catch (error) {
                console.log(error);
                return {status: 'fail', message: "server error", dbError: error}

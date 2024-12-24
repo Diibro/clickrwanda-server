@@ -121,11 +121,27 @@ const advertModel = {
                })
           })
      },
+     countApprovedCategoryAds: async(ops) => {
+          return new Promise((resolve, reject) => {
+               db.query(queries.countApprovedCategoryAds, [ops.category_id, ops.ad_id || "undefined"], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
+               })
+          })
+     },
      selectApprovedSubCategoryAds: async(ops) => {
           return new Promise((resolve,reject) => {
                db.query(queries.selectApprovedSubCategoryAds, [ops.sub_id, ops.limit, ops.offset], (error, data) => {
                     if(error) reject(error);
                     else resolve(data);
+               })
+          });
+     },
+     countApprovedSubCategoryAds: async(ops) => {
+          return new Promise((resolve,reject) => {
+               db.query(queries.countApprovedSubCategoryAds, [ops.sub_id], (error, data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
                })
           });
      },
@@ -564,6 +580,22 @@ const advertModel = {
                db.query(queries.selectApprovedAdsByCategory, [ops.ids, ops.limit,ops.offset], (error,data) => {
                     if(error) reject(error);
                     else resolve(data);
+               } )
+          })
+     },
+     countApprovedAdsByCategory: async(ops) => {
+          if(ops.commission){
+               return new Promise((resolve,reject) => {
+                    db.query(queries.countApprovedCommissionAdsByCategory, [ops.ids], (error,data) => {
+                         if(error) reject(error);
+                         else resolve(data[0].total);
+                    } )
+               })
+          }
+          return new Promise((resolve,reject) => {
+               db.query(queries.countApprovedAdsByCategory, [ops.ids], (error,data) => {
+                    if(error) reject(error);
+                    else resolve(data[0].total);
                } )
           })
      },
